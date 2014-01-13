@@ -13,4 +13,4 @@ User interaction components for NoFlo with Clutter/gjs environment
     A basic test is available in the test/ directory.
 
     $ cd test/
-    $ gjs test-clutter.js
+    $ gjs -I ./js test-clutter.js
