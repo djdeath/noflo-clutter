@@ -45,7 +45,7 @@ let stage = new Clutter.Stage({
 UI.init(stage);
 stage.show();
 stage.hide_cursor();
-stage.set_fullscreen(true);
+//stage.set_fullscreen(true);
 
 let display = Gdk.Display.get_default();
 let screen = display.get_screen(0);

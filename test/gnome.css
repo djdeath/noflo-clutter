@@ -40,7 +40,7 @@
  */
 
 .backgroundArea {
-    background-image: url('./assets/1309604555293.jpg');
+    background-image: url('/usr/share/themes/Adwaita/backgrounds/bright-day.jpg');
 /*    background-image: url('./assets/wallpaper.png');*/
     background-size: cover;
 }
