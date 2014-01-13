@@ -1,0 +1,170 @@
+EXPORT=FILTERWINDOW.IN:WINDOW
+EXPORT=RESIZEDEPS.WINDOWS:WINDOWS
+EXPORT=DX.IN:DX
+EXPORT=DY.IN:DY
+EXPORT=RATIOX.IN:RATIOX
+EXPORT=RATIOY.IN:RATIOY
+EXPORT=AREAWIDTH.IN:AREAWIDTH
+EXPORT=AREAHEIGHT.IN:AREAHEIGHT
+EXPORT=SNAPWINDOW.XSNAPPING:XSNAPPING
+EXPORT=SNAPWINDOW.YSNAPPING:YSNAPPING
+EXPORT=SNAPWINDOW.XDIVSNAPPING:XDIVSNAPPING
+EXPORT=SNAPWINDOW.YDIVSNAPPING:YDIVSNAPPING
+
+# read properties of the window
+
+FilterWindow(FilterMoveResizeWindow) OUT -> IN Window(Split)
+
+Window() OUT -> OBJECT  PreInitialX(GetProperty)
+Window() OUT -> OBJECT  PreInitialY(GetProperty)
+Window() OUT -> OBJECT  PreInitialWidth(GetProperty)
+Window() OUT -> OBJECT  PreInitialHeight(GetProperty)
+Window() OUT -> OBJECT  MinWidth(GetProperty)
+Window() OUT -> OBJECT  MinHeight(GetProperty)
+Window() OUT -> WINDOW  ResizeAreaLimiter(WindowResizeAreaLimiter)
+Window() OUT -> ACTOR   Move(ActorMove)
+Window() OUT -> ACTOR   Resize(ActorResize)
+Window() OUT -> WINDOW  WindowResize(WindowResize)
+Window() OUT -> RESIZED ResizeDeps(ResizeDependingWindows)
+
+DX(Split) OUT     -> X WindowResize()
+DY(Split) OUT     -> Y WindowResize()
+
+'x'             -> PROPERTY PreInitialX()
+'y'             -> PROPERTY PreInitialY()
+'width'         -> PROPERTY PreInitialWidth()
+'height'        -> PROPERTY PreInitialHeight()
+'minimumWidth'  -> PROPERTY MinWidth()
+'minimumHeight' -> PROPERTY MinHeight()
+
+PreInitialX()      VALUE -> IN InitialX(Split)
+PreInitialY()      VALUE -> IN InitialY(Split)
+PreInitialWidth()  VALUE -> IN InitialWidth(Split)
+PreInitialHeight() VALUE -> IN InitialHeight(Split)
+
+
+AreaWidth(Split)           OUT    -> AREAWIDTH     ResizeAreaLimiter()
+AreaHeight(Split)          OUT    -> AREAHEIGHT    ResizeAreaLimiter()
+RatioX(Split)              OUT    -> RATIOX        ResizeAreaLimiter()
+RatioY(Split)              OUT    -> RATIOY        ResizeAreaLimiter()
+MinWidth()                 VALUE  -> MINWIDTH      ResizeAreaLimiter()
+MinHeight()                VALUE  -> MINHEIGHT     ResizeAreaLimiter()
+InitialX()                 OUT    -> INITIALX      ResizeAreaLimiter()
+InitialY()                 OUT    -> INITIALY      ResizeAreaLimiter()
+InitialWidth()             OUT    -> INITIALWIDTH  ResizeAreaLimiter()
+InitialHeight()            OUT    -> INITIALHEIGHT ResizeAreaLimiter()
+
+
+RatioX()                   OUT    -> RATIOX     WindowResize()
+RatioY()                   OUT    -> RATIOY     WindowResize()
+RatioX()                   OUT    -> RATIOX     SnapWindow()
+RatioY()                   OUT    -> RATIOY     SnapWindow()
+
+
+#
+# Base resizing
+#
+
+# x
+InitialX()     OUT  -> AUGEND ResizeAddX(Add)
+WindowResize() X    -> ADDEND ResizeAddX()
+ResizeAddX()   SUM  -> X SnapWindow()
+
+# y
+InitialY()     OUT  -> AUGEND ResizeAddY(Add)
+WindowResize() Y    -> ADDEND ResizeAddY()
+ResizeAddY()   SUM  -> Y SnapWindow()
+
+# width
+InitialWidth()   OUT   -> AUGEND ResizeAddWidth(Add)
+WindowResize()   WIDTH -> ADDEND ResizeAddWidth()
+ResizeAddWidth() SUM   -> WIDTH  SnapWindow()
+
+# height
+InitialHeight()   OUT   -> AUGEND ResizeAddHeight(Add)
+WindowResize()   HEIGHT -> ADDEND ResizeAddHeight()
+ResizeAddHeight() SUM   -> HEIGHT SnapWindow()
+
+#
+# Snapping
+#
+
+SnapWindow(WindowSnapToGrid) X      -> X      ResizeAreaLimiter()
+SnapWindow()                 Y      -> Y      ResizeAreaLimiter()
+SnapWindow()                 WIDTH  -> WIDTH  ResizeAreaLimiter()
+SnapWindow()                 HEIGHT -> HEIGHT ResizeAreaLimiter()
+
+#
+# Limit size to windows area
+#
+
+ResizeAreaLimiter() X      -> X      ResizeDeps()
+ResizeAreaLimiter() Y      -> Y      ResizeDeps()
+ResizeAreaLimiter() WIDTH  -> WIDTH  ResizeDeps()
+ResizeAreaLimiter() HEIGHT -> HEIGHT ResizeDeps()
+
+
+#
+# Limit size relatively to other windows
+#
+
+RatioX() OUT -> RATIOX ResizeDeps()
+RatioY() OUT -> RATIOY ResizeDeps()
+AreaWidth() OUT -> AREAWIDTH ResizeDeps()
+AreaHeight() OUT -> AREAHEIGHT ResizeDeps()
+
+ResizeDeps() X      -> X      Move()
+ResizeDeps() Y      -> Y      Move()
+ResizeDeps() WIDTH  -> WIDTH  Resize()
+ResizeDeps() HEIGHT -> HEIGHT Resize()
+
+ResizeDeps() RESIZERATIOX -> RATIOX SubTreeResize(WindowSubTreeResize)
+ResizeDeps() RESIZERATIOY -> RATIOY SubTreeResize()
+ResizeDeps() RESIZEBOX    -> BOX    SubTreeResize()
+ResizeDeps() RESIZETREE   -> TREE   SubTreeResize()
+
+ResizeDeps()       RESIZETREE   -> TREE   SubTreeToList(WindowSubTreeToList)
+SubTreeToList()    LIST         -> IN     ResizeListDiff(ListDifference)
+ResizeListDiff()   REMOVED      -> IN     ToInitialState(ArrayToElement)
+ToInitialState()   CURRENT      -> TREE   TreeToInitialState(WindowTreeInitialState)
+
+TreeToInitialState() WINDOW -> ACTOR  MoveInitial(ActorMove)
+TreeToInitialState() X      -> X      MoveInitial()
+TreeToInitialState() Y      -> Y      MoveInitial()
+TreeToInitialState() WINDOW -> ACTOR  ResizeInitial(ActorResize)
+TreeToInitialState() WIDTH  -> WIDTH  ResizeInitial()
+TreeToInitialState() HEIGHT -> HEIGHT ResizeInitial()
+
+
+#
+# Debug stuff
+#
+
+#ResizeDeps()       RESIZETREE   -> TREE   SubTreeToList(WindowSubTreeToList)
+SubTreeToList()    LIST         -> LIST   TreesToWindows(WindowTreeListToWindowList)
+TreesToWindows()   LIST         -> IN     SwitcherDeps(ArrayToElement)
+'resizedep'                     -> KLASS  RemoveDepsStyle(WidgetRemoveStyleClass)
+'resizedep'                     -> KLASS  AddDepsStyle(WidgetAddStyleClass)
+SwitcherDeps() PREVIOUS         -> WIDGET RemoveDepsStyle()
+SwitcherDeps() CURRENT          -> WIDGET AddDepsStyle()
+
+ResizeDeps()        AREA        -> PARENT     DisplayAreaXDeps(DisplayArea)
+ResizeDeps()        XX          -> X          DisplayAreaXDeps()
+ResizeDeps()        XY          -> Y          DisplayAreaXDeps()
+ResizeDeps()        XWIDTH      -> WIDTH      DisplayAreaXDeps()
+ResizeDeps()        XHEIGHT     -> HEIGHT     DisplayAreaXDeps()
+'resizeImpactAreaX'             -> STYLECLASS DisplayAreaXDeps()
+
+ResizeDeps()        AREA        -> PARENT     DisplayAreaYDeps(DisplayArea)
+ResizeDeps()        YX          -> X          DisplayAreaYDeps()
+ResizeDeps()        YY          -> Y          DisplayAreaYDeps()
+ResizeDeps()        YWIDTH      -> WIDTH      DisplayAreaYDeps()
+ResizeDeps()        YHEIGHT     -> HEIGHT     DisplayAreaYDeps()
+'resizeImpactAreaY'             -> STYLECLASS DisplayAreaYDeps()
+
+ResizeDeps()    AREA            -> PARENT     DisplayAreaResizeMax(DisplayArea)
+ResizeDeps()    MAXRESIZEX      -> X          DisplayAreaResizeMax()
+ResizeDeps()    MAXRESIZEY      -> Y          DisplayAreaResizeMax()
+ResizeDeps()    MAXRESIZEWIDTH  -> WIDTH      DisplayAreaResizeMax()
+ResizeDeps()    MAXRESIZEHEIGHT -> HEIGHT     DisplayAreaResizeMax()
+'resizeMaxArea'                 -> STYLECLASS DisplayAreaResizeMax()

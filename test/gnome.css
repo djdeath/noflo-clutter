@@ -1,0 +1,599 @@
+/*
+ * Main bar
+ */
+
+.mainBar {
+    background-color: black;
+    spacing: 30px;
+    padding: 0px 30px 0px 30px;
+    height: 0px;
+}
+
+.mainBar StButton {
+    width: 50px;
+    padding: 30px;
+/*    transition-duration: 200ms;*/
+    background-size: contain;
+}
+
+.mainBar StButton:active {
+    background-color: #d3d3d3;
+    opacity: 0.7;
+    border-radius: 8px;
+    transition-duration: 150ms;
+}
+
+.mainBarBackButton {
+    background-image: url('./assets/ic_sysbar_back.png');
+}
+
+.mainBarWindowsButton {
+    background-image: url('./assets/ic_sysbar_recent.png');
+}
+
+.mainBarHomeButton {
+    background-image: url('./assets/ic_sysbar_home.png');
+}
+
+/*
+ * Background
+ */
+
+.backgroundArea {
+    background-image: url('./assets/1309604555293.jpg');
+/*    background-image: url('./assets/wallpaper.png');*/
+    background-size: cover;
+}
+
+.windowsArea {
+    min-width: 0px;
+    min-height: 0px;
+}
+
+/*
+ * Panel
+ */
+
+.panelContainer {
+    padding: 16px 0px 16px 3px;
+}
+
+.panel {
+    background-color: rgba(0, 0, 0, 1.0);
+    border-radius: 20px 0px 0px 20px;
+    min-width: 67px;
+    min-height: 80px;
+    spacing: 20px;
+    padding: 20px 0px 20px 3px;
+}
+
+.appButtonStatus {
+    min-width: 4px;
+}
+
+.appButtonStatus:running {
+    background-color: transparent;
+}
+
+.appButtonStatus:minimized {
+    background-color: transparent;
+}
+
+.panel StButton > StBoxLayout > StWidget:first-child {
+    min-width: 43px;
+    min-height: 43px;
+    background-size: contain;
+}
+
+.panel StButton > StBoxLayout > StWidget:first-child:running {
+    background-color: #3dabcb;
+}
+
+.panel StButton > StBoxLayout > StWidget:first-child:minimized {
+    background-color: grey;
+
+}
+
+.panel StButton:active {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+}
+
+.panelDrawer {
+    padding: 16px 20px 0px 0px;
+}
+
+.panelDrawerBox {
+    background-color: grey; /*rgba(0, 0, 0, 0.5);*/
+    padding: 10px;
+    spacing-columns: 20px;
+    spacing-rows: 20px;
+    box-shadow: 10px 10px 10px black;
+}
+
+.drawerButton {
+    spacing: 10px;
+}
+
+.drawerButton .panelButton {
+    padding: 4px 0px 3px 4px;
+    min-width: 58px;
+    min-height: 52px;
+}
+
+.drawerButton .panelButton:unsensitive {
+    background-color: darkgrey; /*rgba(128, 128, 128, 1);*/
+    box-shadow: inset 0px 2px 4px rgba(0,0,0,0.6);
+    border-radius: 10px;
+}
+
+.drawerButton .panelButton:active {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+}
+
+.drawerButton StLabel {
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/*
+ * Window generic style
+ */
+
+.window {
+    padding: 16px;
+    min-width: 380px;
+    min-height: 420px;
+}
+
+.window:focused {
+}
+
+.windowInner {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 0px;
+    box-shadow: 2px 2px 10px 10px black;
+}
+
+.windowContent {
+}
+
+.window:focused .windowInner {
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 2px 2px 10px 10px black;
+}
+
+.windowTitleBar {
+    background-color: grey; /*rgba(0, 0, 0, 0.2);*/
+    height: 43px;
+    padding: 0px 15px 0px 15px;
+    spacing: 25px;
+}
+
+.window:focused .windowTitleBar {
+    background-color: #232323;
+}
+
+.windowTitleBar StButton {
+    width: 38px;
+    height: 38px;
+    background-size: contain;
+}
+
+.windowTitleBar StButton:active {
+    background-color: white;
+}
+
+.windowTitleBarCloseButton {
+    background-image: url('assets/chrome_close.png');
+}
+
+.windowTitleBarMaximizeButton {
+    background-image: url('assets/chrome_maximize.png');
+}
+
+.windowTitleBarMaximizeButton:maximized {
+    background-image: url('assets/chrome_unmaximize.png');
+}
+
+.windowTitleBarMinimizeButton {
+    background-image: url('assets/chrome_minimize.png');
+}
+
+.windowBorderSide {
+    background-color: transparent;
+    min-width: 3px;
+}
+
+.windowBorderSide:resizing {
+    background-color: transparent;
+}
+
+.windowBorderSide:hover {
+    background-color: transparent;
+}
+
+.windowBorderBottom {
+    background-color: transparent;
+    min-height: 3px;
+}
+
+.windowBorderBottom:resizing {
+    background-color: transparent;
+}
+
+.windowBorderBottom:hover {
+    background-color: transparent;
+}
+
+.windowTitleBox #chromeIcon {
+    background-size: contain;
+    min-width: 30px;
+    min-height: 30px;
+}
+
+.windowTitleBox {
+    spacing: 10px;
+}
+
+.windowTitle {
+/*    text-align: center;*/
+    font-family: roboto medium;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.window:moveError .windowInner {
+    background-color: rgba(0, 0, 0, 0.8);
+    box-shadow: 2px 2px 10px 10px red;
+}
+
+
+/*
+ * Ghost Window
+ */
+
+.window:ghost .windowTitleBar {
+    background-color: #c65252;
+    height: 43px;
+    padding: 0px 12px 0px 12px;
+    spacing: 25px;
+}
+
+.window:ghost .windowInner {
+    background-color: transparent;
+}
+
+.window:ghost .windowContent {
+    border: 3px #c65252;
+    background-image: none;
+    background-color: red;
+}
+
+.window:ghost .windowBorderSide {
+    background-color: #c65252;
+    min-width: 3px;
+}
+
+.window:ghost .windowBorderBottom {
+    background-color: #c65252;
+    min-height: 3px;
+}
+
+.windowTitleBarCloseButton {
+    background-image: url('assets/chrome_close.png');
+}
+
+.windowTitleBarMaximizeButton {
+    background-image: url('assets/chrome_maximize.png');
+}
+
+.windowTitleBarMaximizeButton:maximized {
+    background-image: url('assets/chrome_unmaximize.png');
+}
+
+.windowTitleBarMinimizeButton {
+    background-image: url('assets/chrome_minimize.png');
+}
+
+/*
+ * Apps stuff
+ */
+
+/**/
+.drawerPanelIcon {
+    background-image: url('./assets/ic_launcher_app_drawer.png');
+}
+
+/**/
+.calculatorPanelIcon {
+    background-image: url('/usr/share/icons/gnome/48x48/apps/gnome-calculator.png');
+}
+
+.calculatorContent {
+    background-image: url('/usr/share/icons/gnome/256x256/apps/gnome-calculator.png');
+    background-color: grey;
+}
+
+.window:focused .calculatorContent {
+    background-color: lightgrey;
+}
+
+.calculatorWindowIcon {
+    background-image: url('/usr/share/icons/gnome/32x32/apps/gnome-calculator.png');
+}
+
+/**/
+.cameraPanelIcon {
+    background-image: url('/usr/share/icons/gnome/48x48/devices/camera-photo.png');
+}
+
+.cameraContent {
+    background-image: url('/usr/share/icons/gnome/256x256/devices/camera-photo.png');
+    background-color: grey;
+}
+
+.window:focused .cameraContent {
+    background-color: lightgrey;
+}
+
+.cameraWindowIcon {
+    background-image: url('/usr/share/icons/gnome/32x32/devices/camera-photo.png');
+}
+
+/**/
+.chromePanelIcon {
+    background-image: url('./assets/app_icon_chrome.png');
+}
+
+.chromeContent {
+    background-image: url('./assets/app_content_chrome.png');
+    background-color: white;
+}
+
+.chromeWindowIcon {
+    background-image: url('assets/chrome_icon_chrome.png');
+}
+
+/**/
+.dropboxPanelIcon {
+    background-image: url('./assets/app_icon_dropbox.png');
+}
+
+.dropboxContent {
+    background-image: url('./assets/app_content_dropbox.png');
+    background-color: #007ee5;
+}
+
+.dropboxWindowIcon {
+    background-image: url('assets/chrome_icon_dropbox.png');
+}
+
+/**/
+.evernotePanelIcon {
+    background-image: url('./assets/app_icon_evernote.png');
+}
+
+.evernoteContent {
+    background-image: url('./assets/app_content_evernote.png');
+    background-color: #6fb536;
+}
+
+.evernoteWindowIcon {
+    background-image: url('assets/chrome_icon_evernote.png');
+}
+
+/**/
+.facebookPanelIcon {
+    background-image: url('./assets/app_icon_facebook.png');
+}
+
+.facebookContent {
+    background-image: url('./assets/app_content_facebook.png');
+    background-color: #3664a2;
+}
+
+.facebookWindowIcon {
+    background-image: url('assets/chrome_icon_facebook.png');
+}
+
+/**/
+.filesPanelIcon {
+    background-image: url('/usr/share/icons/gnome/48x48/apps/system-file-manager.png');
+}
+
+.filesContent {
+    background-image: url('/usr/share/icons/gnome/256x256/apps/system-file-manager.png');
+    background-color: grey;
+}
+
+.window:focused .filesContent {
+    background-color: lightgrey;
+}
+
+.filesWindowIcon {
+    background-image: url('/usr/share/icons/gnome/32x32/apps/system-file-manager.png');
+}
+
+/**/
+.gplusPanelIcon {
+    background-image: url('./assets/app_icon_gplus.png');
+}
+
+.gplusContent {
+    background-image: url('./assets/app_content_gplus.png');
+    background-color: white;
+}
+
+.gplusWindowIcon {
+    background-image: url('assets/chrome_icon_gplus.png');
+}
+
+/**/
+.mapsPanelIcon {
+    background-image: url('./assets/app_icon_maps.png');
+}
+
+.mapsContent {
+    background-image: url('./assets/app_content_maps.png');
+}
+
+.mapsWindowIcon {
+    background-image: url('assets/chrome_icon_maps.png');
+}
+
+/**/
+.pinterestPanelIcon {
+    background-image: url('./assets/app_icon_pinterest.png');
+}
+
+.pinterestContent {
+    background-image: url('./assets/app_content_pinterest.png');
+    background-color: #e2e2e2;
+}
+
+.pinterestWindowIcon {
+    background-image: url('assets/chrome_icon_pinterest.png');
+}
+
+/**/
+.rhythmboxPanelIcon {
+    background-image: url('/usr/share/icons/gnome/48x48/devices/audio-speakers.png');
+}
+
+.rhythmboxContent {
+    background-image: url('/usr/share/icons/gnome/256x256/devices/audio-speakers.png');
+    background-color: grey;
+}
+
+.window:focused .rhythmboxContent {
+    background-color: lightgrey;
+}
+
+.rhythmboxWindowIcon {
+    background-image: url('/usr/share/icons/gnome/32x32/devices/audio-speakers.png');
+}
+
+/**/
+.skypePanelIcon {
+    background-image: url('./assets/app_icon_skype.png');
+}
+
+.skypeContent {
+    background-image: url('./assets/app_content_skype.png');
+    background-color: white;
+}
+
+.skypeWindowIcon {
+    background-image: url('assets/chrome_icon_skype.png');
+}
+
+/**/
+.spotifyPanelIcon {
+    background-image: url('./assets/app_icon_spotify.png');
+}
+
+.spotifyContent {
+    background-image: url('./assets/app_content_spotify.png');
+    background-color: #333333;
+}
+
+.spotifyWindowIcon {
+    background-image: url('assets/chrome_icon_spotify.png');
+}
+
+/**/
+.terminalPanelIcon {
+    background-image: url('/usr/share/icons/gnome/48x48/apps/terminal.png');
+}
+
+.terminalContent {
+    background-image: url('/usr/share/icons/gnome/256x256/apps/terminal.png');
+    background-color: grey;
+}
+
+.window:focused .terminalContent {
+    background-color: lightgrey;
+}
+
+.terminalWindowIcon {
+    background-image: url('/usr/share/icons/gnome/32x32/apps/terminal.png');
+}
+
+/**/
+.twitterPanelIcon {
+    background-image: url('./assets/app_icon_twitter.png');
+}
+
+.twitterContent {
+    background-image: url('./assets/app_content_twitter.png');
+    background-color: #2daae1;
+}
+
+.twitterWindowIcon {
+    background-image: url('assets/chrome_icon_twitter.png');
+}
+
+/**/
+.weatherPanelIcon {
+    background-image: url('/usr/share/icons/gnome/48x48/status/weather-clear.png');
+}
+
+.weatherContent {
+    background-image: url('/usr/share/icons/gnome/256x256/status/dialog-warning.png');
+    background-color: grey;
+}
+
+.window:focused .weatherContent {
+    background-color: lightgrey;
+}
+
+.weatherWindowIcon {
+    background-image: url('/usr/share/icons/gnome/32x32/status/weather-clear.png');
+}
+
+/**/
+.webPanelIcon {
+    background-image: url('/usr/share/icons/gnome/48x48/apps/web-browser.png');
+}
+
+.webContent {
+    background-image: url('/usr/share/icons/gnome/256x256/apps/web-browser.png');
+    background-color: grey;
+}
+
+.window:focused .webContent {
+    background-color: lightgrey;
+}
+
+.webWindowIcon {
+    background-image: url('/usr/share/icons/gnome/32x32/apps/web-browser.png');
+}
+
+
+/*
+ * Debug items
+ */
+
+.window:resizedep {
+/*    background-color: rgba(255, 255, 0, 0.3);*/
+}
+
+.window:focused {
+/*    background-color: rgba(0, 0, 255, 0.3);*/
+}
+
+.resizeImpactAreaX {
+/*    background-color: rgba(255, 0, 0, 0.3);*/
+}
+
+.resizeImpactAreaY {
+/*    background-color: rgba(0, 255, 0, 0.3);*/
+}
+
+.resizeMaxArea {
+/*    background-color: rgba(255, 168, 0, 0.3);*/
+}

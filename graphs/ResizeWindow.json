@@ -1,0 +1,567 @@
+{
+  "processes": {
+    "Window": {
+      "component": "Split"
+    },
+    "PreInitialX": {
+      "component": "GetProperty"
+    },
+    "PreInitialY": {
+      "component": "GetProperty"
+    },
+    "PreInitialWidth": {
+      "component": "GetProperty"
+    },
+    "PreInitialHeight": {
+      "component": "GetProperty"
+    },
+    "MinWidth": {
+      "component": "GetProperty"
+    },
+    "MinHeight": {
+      "component": "GetProperty"
+    },
+    "ResizeAreaLimiter": {
+      "component": "WindowResizeAreaLimiter"
+    },
+    "Move": {
+      "component": "ActorMove"
+    },
+    "Resize": {
+      "component": "ActorResize"
+    },
+    "InitialX": {
+      "component": "Split"
+    },
+    "InitialY": {
+      "component": "Split"
+    },
+    "InitialWidth": {
+      "component": "Split"
+    },
+    "InitialHeight": {
+      "component": "Split"
+    },
+    "AreaWidth": {
+      "component": "Split"
+    },
+    "AreaHeight": {
+      "component": "Split"
+    },
+    "RatioX": {
+      "component": "Split"
+    },
+    "RatioY": {
+      "component": "Split"
+    },
+    "WindowResize": {
+      "component": "WindowResize"
+    },
+    "ResizeAddX": {
+      "component": "Add"
+    },
+    "ResizeAddY": {
+      "component": "Add"
+    },
+    "ResizeAddWidth": {
+      "component": "Add"
+    },
+    "ResizeAddHeight": {
+      "component": "Add"
+    }
+  },
+  "connections": [
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "PreInitialX",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "PreInitialY",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "PreInitialWidth",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "PreInitialHeight",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "MinWidth",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "MinHeight",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "window"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Move",
+        "port": "actor"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Resize",
+        "port": "actor"
+      }
+    },
+    {
+      "data": "x",
+      "tgt": {
+        "process": "PreInitialX",
+        "port": "property"
+      }
+    },
+    {
+      "data": "y",
+      "tgt": {
+        "process": "PreInitialY",
+        "port": "property"
+      }
+    },
+    {
+      "data": "width",
+      "tgt": {
+        "process": "PreInitialWidth",
+        "port": "property"
+      }
+    },
+    {
+      "data": "height",
+      "tgt": {
+        "process": "PreInitialHeight",
+        "port": "property"
+      }
+    },
+    {
+      "data": "minimumWidth",
+      "tgt": {
+        "process": "MinWidth",
+        "port": "property"
+      }
+    },
+    {
+      "data": "minimumHeight",
+      "tgt": {
+        "process": "MinHeight",
+        "port": "property"
+      }
+    },
+    {
+      "src": {
+        "process": "PreInitialX",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "InitialX",
+        "port": "in"
+      }
+    },
+    {
+      "src": {
+        "process": "PreInitialY",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "InitialY",
+        "port": "in"
+      }
+    },
+    {
+      "src": {
+        "process": "PreInitialWidth",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "InitialWidth",
+        "port": "in"
+      }
+    },
+    {
+      "src": {
+        "process": "PreInitialHeight",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "InitialHeight",
+        "port": "in"
+      }
+    },
+    {
+      "src": {
+        "process": "AreaWidth",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "areawidth"
+      }
+    },
+    {
+      "src": {
+        "process": "AreaHeight",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "areaheight"
+      }
+    },
+    {
+      "src": {
+        "process": "RatioX",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "ratiox"
+      }
+    },
+    {
+      "src": {
+        "process": "RatioY",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "ratioy"
+      }
+    },
+    {
+      "src": {
+        "process": "MinWidth",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "minwidth"
+      }
+    },
+    {
+      "src": {
+        "process": "MinHeight",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "minheight"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialX",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "initialx"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialY",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "initialy"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialWidth",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "initialwidth"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialHeight",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "initialheight"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "WindowResize",
+        "port": "window"
+      }
+    },
+    {
+      "src": {
+        "process": "RatioX",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "WindowResize",
+        "port": "ratiox"
+      }
+    },
+    {
+      "src": {
+        "process": "RatioY",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "WindowResize",
+        "port": "ratioy"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialX",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAddX",
+        "port": "augend"
+      }
+    },
+    {
+      "src": {
+        "process": "WindowResize",
+        "port": "x"
+      },
+      "tgt": {
+        "process": "ResizeAddX",
+        "port": "addend"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAddX",
+        "port": "sum"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "x"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialY",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAddY",
+        "port": "augend"
+      }
+    },
+    {
+      "src": {
+        "process": "WindowResize",
+        "port": "y"
+      },
+      "tgt": {
+        "process": "ResizeAddY",
+        "port": "addend"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAddY",
+        "port": "sum"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "y"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialWidth",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAddWidth",
+        "port": "augend"
+      }
+    },
+    {
+      "src": {
+        "process": "WindowResize",
+        "port": "width"
+      },
+      "tgt": {
+        "process": "ResizeAddWidth",
+        "port": "addend"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAddWidth",
+        "port": "sum"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "width"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialHeight",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "ResizeAddHeight",
+        "port": "augend"
+      }
+    },
+    {
+      "src": {
+        "process": "WindowResize",
+        "port": "height"
+      },
+      "tgt": {
+        "process": "ResizeAddHeight",
+        "port": "addend"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAddHeight",
+        "port": "sum"
+      },
+      "tgt": {
+        "process": "ResizeAreaLimiter",
+        "port": "height"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAreaLimiter",
+        "port": "x"
+      },
+      "tgt": {
+        "process": "Move",
+        "port": "x"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAreaLimiter",
+        "port": "y"
+      },
+      "tgt": {
+        "process": "Move",
+        "port": "y"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAreaLimiter",
+        "port": "width"
+      },
+      "tgt": {
+        "process": "Resize",
+        "port": "width"
+      }
+    },
+    {
+      "src": {
+        "process": "ResizeAreaLimiter",
+        "port": "height"
+      },
+      "tgt": {
+        "process": "Resize",
+        "port": "height"
+      }
+    }
+  ],
+  "exports": [
+    {
+      "private": "window.in",
+      "public": "window"
+    },
+    {
+      "private": "windowresize.x",
+      "public": "dx"
+    },
+    {
+      "private": "windowresize.y",
+      "public": "dy"
+    },
+    {
+      "private": "ratiox.in",
+      "public": "ratiox"
+    },
+    {
+      "private": "ratioy.in",
+      "public": "ratioy"
+    },
+    {
+      "private": "areawidth.in",
+      "public": "areawidth"
+    },
+    {
+      "private": "areaheight.in",
+      "public": "areaheight"
+    }
+  ]
+}

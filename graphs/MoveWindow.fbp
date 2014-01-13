@@ -1,0 +1,34 @@
+EXPORT=WINDOW.IN:WINDOW
+EXPORT=MOVEADDX.ADDEND:DX
+EXPORT=MOVEADDY.ADDEND:DY
+EXPORT=LIMITX.MINUEND:AREAWIDTH
+EXPORT=LIMITY.MINUEND:AREAHEIGHT
+
+# read properties of the window
+'x'      -> PROPERTY InitialX(GetProperty)
+'y'      -> PROPERTY InitialY(GetProperty)
+'width'  -> PROPERTY InitialWidth(GetProperty)
+'height' -> PROPERTY InitialHeight(GetProperty)
+
+Window(Split) OUT -> OBJECT InitialX()
+Window() OUT      -> OBJECT InitialY()
+Window() OUT      -> OBJECT InitialWidth()
+Window() OUT      -> OBJECT InitialHeight()
+
+
+InitialWidth()  VALUE -> SUBTRAHEND LimitX(Subtract)
+InitialHeight() VALUE -> SUBTRAHEND LimitY(Subtract)
+
+InitialX() VALUE      -> AUGEND MoveAddX(Add)
+MoveAddX() SUM        -> IN     LimitMoveX(LowHighFilter)
+LimitX()   DIFFERENCE -> HIGH   LimitMoveX()
+'0'                   -> LOW    LimitMoveX()
+
+InitialY() VALUE      -> AUGEND MoveAddY(Add)
+MoveAddY() SUM        -> IN     LimitMoveY(LowHighFilter)
+LimitY()   DIFFERENCE -> HIGH   LimitMoveY()
+'0'                   -> LOW    LimitMoveY()
+
+Window()     OUT -> ACTOR Move(ActorMove)
+LimitMoveX() OUT -> X Move()
+LimitMoveY() OUT -> Y Move()

@@ -1,0 +1,75 @@
+EXPORT=WINDOW.IN:WINDOW
+EXPORT=WINDOWRESIZE.X:DX
+EXPORT=WINDOWRESIZE.Y:DY
+EXPORT=RATIOX.IN:RATIOX
+EXPORT=RATIOY.IN:RATIOY
+EXPORT=AREAWIDTH.IN:AREAWIDTH
+EXPORT=AREAHEIGHT.IN:AREAHEIGHT
+
+# read properties of the window
+
+Window(Split) OUT -> OBJECT PreInitialX(GetProperty)
+Window() OUT      -> OBJECT PreInitialY(GetProperty)
+Window() OUT      -> OBJECT PreInitialWidth(GetProperty)
+Window() OUT      -> OBJECT PreInitialHeight(GetProperty)
+Window() OUT      -> OBJECT MinWidth(GetProperty)
+Window() OUT      -> OBJECT MinHeight(GetProperty)
+Window() OUT      -> WINDOW ResizeAreaLimiter(WindowResizeAreaLimiter)
+Window() OUT      -> ACTOR  Move(ActorMove)
+Window() OUT      -> ACTOR  Resize(ActorResize)
+
+'x'             -> PROPERTY PreInitialX()
+'y'             -> PROPERTY PreInitialY()
+'width'         -> PROPERTY PreInitialWidth()
+'height'        -> PROPERTY PreInitialHeight()
+'minimumWidth'  -> PROPERTY MinWidth()
+'minimumHeight' -> PROPERTY MinHeight()
+
+PreInitialX()      VALUE -> IN InitialX(Split)
+PreInitialY()      VALUE -> IN InitialY(Split)
+PreInitialWidth()  VALUE -> IN InitialWidth(Split)
+PreInitialHeight() VALUE -> IN InitialHeight(Split)
+
+
+AreaWidth(Split)           OUT    -> AREAWIDTH     ResizeAreaLimiter()
+AreaHeight(Split)          OUT    -> AREAHEIGHT    ResizeAreaLimiter()
+RatioX(Split)              OUT    -> RATIOX        ResizeAreaLimiter()
+RatioY(Split)              OUT    -> RATIOY        ResizeAreaLimiter()
+MinWidth()                 VALUE  -> MINWIDTH      ResizeAreaLimiter()
+MinHeight()                VALUE  -> MINHEIGHT     ResizeAreaLimiter()
+InitialX()                 OUT    -> INITIALX      ResizeAreaLimiter()
+InitialY()                 OUT    -> INITIALY      ResizeAreaLimiter()
+InitialWidth()             OUT    -> INITIALWIDTH  ResizeAreaLimiter()
+InitialHeight()            OUT    -> INITIALHEIGHT ResizeAreaLimiter()
+
+
+Window()                   OUT    -> WINDOW     WindowResize(WindowResize)
+RatioX(Split)              OUT    -> RATIOX     WindowResize()
+RatioY(Split)              OUT    -> RATIOY     WindowResize()
+
+
+# x
+InitialX()     OUT  -> AUGEND ResizeAddX(Add)
+WindowResize() X    -> ADDEND ResizeAddX()
+ResizeAddX()   SUM  -> X ResizeAreaLimiter()
+
+# y
+InitialY()     OUT  -> AUGEND ResizeAddY(Add)
+WindowResize() Y    -> ADDEND ResizeAddY()
+ResizeAddY()   SUM  -> Y ResizeAreaLimiter()
+
+# width
+InitialWidth()   OUT   -> AUGEND ResizeAddWidth(Add)
+WindowResize()   WIDTH -> ADDEND ResizeAddWidth()
+ResizeAddWidth() SUM   -> WIDTH ResizeAreaLimiter()
+
+# height
+InitialHeight()   OUT   -> AUGEND ResizeAddHeight(Add)
+WindowResize()   HEIGHT -> ADDEND ResizeAddHeight()
+ResizeAddHeight() SUM   -> HEIGHT ResizeAreaLimiter()
+
+# actual changes
+ResizeAreaLimiter() X      -> X      Move()
+ResizeAreaLimiter() Y      -> Y      Move()
+ResizeAreaLimiter() WIDTH  -> WIDTH  Resize()
+ResizeAreaLimiter() HEIGHT -> HEIGHT Resize()

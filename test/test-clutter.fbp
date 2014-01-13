@@ -1,0 +1,5 @@
+'plop' -> NAME Actor(Actor)
+Actor() ACTOR -> ACTOR Move(ActorMove)
+
+Capture(StageCapture) X -> X Move()
+Capture() Y -> Y Move()

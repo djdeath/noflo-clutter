@@ -1,0 +1,70 @@
+EXPORT=FILTERWINDOW.IN:WINDOW
+#EXPORT=OVERLAPPING.POINTER:POINTER
+EXPORT=OVERLAPPING.WINDOWS:WINDOWS
+EXPORT=MOVEADDX.ADDEND:DX
+EXPORT=MOVEADDY.ADDEND:DY
+EXPORT=AREAWIDTH.IN:AREAWIDTH
+EXPORT=AREAHEIGHT.IN:AREAHEIGHT
+EXPORT=SNAPWINDOW.XSNAPPING:XSNAPPING
+EXPORT=SNAPWINDOW.YSNAPPING:YSNAPPING
+EXPORT=SNAPWINDOW.XDIVSNAPPING:XDIVSNAPPING
+EXPORT=SNAPWINDOW.YDIVSNAPPING:YDIVSNAPPING
+
+# read properties of the window
+'x'      -> PROPERTY InitialX(GetProperty)
+'y'      -> PROPERTY InitialY(GetProperty)
+'width'  -> PROPERTY InitialWidth(GetProperty)
+'height' -> PROPERTY InitialHeight(GetProperty)
+
+FilterWindow(FilterMoveResizeWindow) OUT -> IN Window(Split)
+
+Window() OUT -> OBJECT InitialX()
+Window() OUT -> OBJECT InitialY()
+Window() OUT -> OBJECT InitialWidth()
+Window() OUT -> OBJECT InitialHeight()
+Window() OUT -> WINDOW Overlapping(WindowOverlapping)
+
+AreaWidth(Split)  OUT -> MINUEND LimitX()
+AreaHeight(Split) OUT -> MINUEND LimitY()
+
+
+InitialWidth()  VALUE -> SUBTRAHEND LimitX(Subtract)
+InitialHeight() VALUE -> SUBTRAHEND LimitY(Subtract)
+
+InitialWidth()  VALUE -> WIDTH  SnapWindow(WindowSnapPositionToGrid)
+InitialHeight() VALUE -> HEIGHT SnapWindow()
+
+InitialX() VALUE      -> AUGEND MoveAddX(Add)
+MoveAddX() SUM        -> X      SnapWindow()
+SnapWindow() X        -> IN     LimitMoveX(LowHighFilter)
+#MoveAddX() SUM        -> IN     LimitMoveX(LowHighFilter)
+LimitX()   DIFFERENCE -> HIGH   LimitMoveX()
+'0'                   -> LOW    LimitMoveX()
+
+InitialY() VALUE      -> AUGEND MoveAddY(Add)
+MoveAddY() SUM        -> Y      SnapWindow()
+SnapWindow() Y        -> IN     LimitMoveY(LowHighFilter)
+#MoveAddY() SUM        -> IN      LimitMoveY(LowHighFilter)
+LimitY()   DIFFERENCE -> HIGH   LimitMoveY()
+'0'                   -> LOW    LimitMoveY()
+
+Window()     OUT -> ACTOR Move(ActorMove)
+LimitMoveX() OUT -> X Move()
+LimitMoveY() OUT -> Y Move()
+
+LimitMoveX() OUT -> X          Overlapping()
+LimitMoveY() OUT -> Y          Overlapping()
+AreaWidth()  OUT -> AREAWIDTH  Overlapping()
+AreaHeight() OUT -> AREAHEIGHT Overlapping()
+
+
+Overlapping()  HIGHLIGHT        -> IN     SwitcherDeps(ArrayToElement)
+'moveError'                     -> KLASS  RemoveDepsStyle(WidgetRemoveStyleClass)
+'moveError'                     -> KLASS  AddDepsStyle(WidgetAddStyleClass)
+SwitcherDeps() PREVIOUS         -> WIDGET RemoveDepsStyle()
+SwitcherDeps() CURRENT          -> WIDGET AddDepsStyle()
+
+'ghostWindow'             -> NAME        GhostWindow(Actor)
+GhostWindow() ACTOR       -> GHOSTWINDOW GhostDisplayer(GhostWindowDisplayer)
+Window()      OUT         -> WINDOW      GhostDisplayer()
+Overlapping() FALLBACKBOX -> BOX         GhostDisplayer()

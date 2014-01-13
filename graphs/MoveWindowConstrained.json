@@ -1,0 +1,507 @@
+{
+  "processes": {
+    "InitialX": {
+      "component": "GetProperty"
+    },
+    "InitialY": {
+      "component": "GetProperty"
+    },
+    "InitialWidth": {
+      "component": "GetProperty"
+    },
+    "InitialHeight": {
+      "component": "GetProperty"
+    },
+    "FilterWindow": {
+      "component": "FilterMoveResizeWindow"
+    },
+    "Window": {
+      "component": "Split"
+    },
+    "Overlapping": {
+      "component": "WindowOverlapping"
+    },
+    "AreaWidth": {
+      "component": "Split"
+    },
+    "LimitX": {
+      "component": "Subtract"
+    },
+    "AreaHeight": {
+      "component": "Split"
+    },
+    "LimitY": {
+      "component": "Subtract"
+    },
+    "SnapWindow": {
+      "component": "WindowSnapPositionToGrid"
+    },
+    "MoveAddX": {
+      "component": "Add"
+    },
+    "LimitMoveX": {
+      "component": "LowHighFilter"
+    },
+    "MoveAddY": {
+      "component": "Add"
+    },
+    "LimitMoveY": {
+      "component": "LowHighFilter"
+    },
+    "Move": {
+      "component": "ActorMove"
+    },
+    "SwitcherDeps": {
+      "component": "ArrayToElement"
+    },
+    "RemoveDepsStyle": {
+      "component": "WidgetRemoveStyleClass"
+    },
+    "AddDepsStyle": {
+      "component": "WidgetAddStyleClass"
+    },
+    "GhostWindow": {
+      "component": "Actor"
+    },
+    "GhostDisplayer": {
+      "component": "GhostWindowDisplayer"
+    }
+  },
+  "connections": [
+    {
+      "data": "x",
+      "tgt": {
+        "process": "InitialX",
+        "port": "property"
+      }
+    },
+    {
+      "data": "y",
+      "tgt": {
+        "process": "InitialY",
+        "port": "property"
+      }
+    },
+    {
+      "data": "width",
+      "tgt": {
+        "process": "InitialWidth",
+        "port": "property"
+      }
+    },
+    {
+      "data": "height",
+      "tgt": {
+        "process": "InitialHeight",
+        "port": "property"
+      }
+    },
+    {
+      "src": {
+        "process": "FilterWindow",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Window",
+        "port": "in"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "InitialX",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "InitialY",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "InitialWidth",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "InitialHeight",
+        "port": "object"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Overlapping",
+        "port": "window"
+      }
+    },
+    {
+      "src": {
+        "process": "AreaWidth",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "LimitX",
+        "port": "minuend"
+      }
+    },
+    {
+      "src": {
+        "process": "AreaHeight",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "LimitY",
+        "port": "minuend"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialWidth",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "LimitX",
+        "port": "subtrahend"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialHeight",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "LimitY",
+        "port": "subtrahend"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialWidth",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "SnapWindow",
+        "port": "width"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialHeight",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "SnapWindow",
+        "port": "height"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialX",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "MoveAddX",
+        "port": "augend"
+      }
+    },
+    {
+      "src": {
+        "process": "MoveAddX",
+        "port": "sum"
+      },
+      "tgt": {
+        "process": "SnapWindow",
+        "port": "x"
+      }
+    },
+    {
+      "src": {
+        "process": "SnapWindow",
+        "port": "x"
+      },
+      "tgt": {
+        "process": "LimitMoveX",
+        "port": "in"
+      }
+    },
+    {
+      "src": {
+        "process": "LimitX",
+        "port": "difference"
+      },
+      "tgt": {
+        "process": "LimitMoveX",
+        "port": "high"
+      }
+    },
+    {
+      "data": "0",
+      "tgt": {
+        "process": "LimitMoveX",
+        "port": "low"
+      }
+    },
+    {
+      "src": {
+        "process": "InitialY",
+        "port": "value"
+      },
+      "tgt": {
+        "process": "MoveAddY",
+        "port": "augend"
+      }
+    },
+    {
+      "src": {
+        "process": "MoveAddY",
+        "port": "sum"
+      },
+      "tgt": {
+        "process": "SnapWindow",
+        "port": "y"
+      }
+    },
+    {
+      "src": {
+        "process": "SnapWindow",
+        "port": "y"
+      },
+      "tgt": {
+        "process": "LimitMoveY",
+        "port": "in"
+      }
+    },
+    {
+      "src": {
+        "process": "LimitY",
+        "port": "difference"
+      },
+      "tgt": {
+        "process": "LimitMoveY",
+        "port": "high"
+      }
+    },
+    {
+      "data": "0",
+      "tgt": {
+        "process": "LimitMoveY",
+        "port": "low"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Move",
+        "port": "actor"
+      }
+    },
+    {
+      "src": {
+        "process": "LimitMoveX",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Move",
+        "port": "x"
+      }
+    },
+    {
+      "src": {
+        "process": "LimitMoveY",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Move",
+        "port": "y"
+      }
+    },
+    {
+      "src": {
+        "process": "LimitMoveX",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Overlapping",
+        "port": "x"
+      }
+    },
+    {
+      "src": {
+        "process": "LimitMoveY",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Overlapping",
+        "port": "y"
+      }
+    },
+    {
+      "src": {
+        "process": "AreaWidth",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Overlapping",
+        "port": "areawidth"
+      }
+    },
+    {
+      "src": {
+        "process": "AreaHeight",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "Overlapping",
+        "port": "areaheight"
+      }
+    },
+    {
+      "src": {
+        "process": "Overlapping",
+        "port": "highlight"
+      },
+      "tgt": {
+        "process": "SwitcherDeps",
+        "port": "in"
+      }
+    },
+    {
+      "data": "moveError",
+      "tgt": {
+        "process": "RemoveDepsStyle",
+        "port": "klass"
+      }
+    },
+    {
+      "data": "moveError",
+      "tgt": {
+        "process": "AddDepsStyle",
+        "port": "klass"
+      }
+    },
+    {
+      "src": {
+        "process": "SwitcherDeps",
+        "port": "previous"
+      },
+      "tgt": {
+        "process": "RemoveDepsStyle",
+        "port": "widget"
+      }
+    },
+    {
+      "src": {
+        "process": "SwitcherDeps",
+        "port": "current"
+      },
+      "tgt": {
+        "process": "AddDepsStyle",
+        "port": "widget"
+      }
+    },
+    {
+      "data": "ghostWindow",
+      "tgt": {
+        "process": "GhostWindow",
+        "port": "name"
+      }
+    },
+    {
+      "src": {
+        "process": "GhostWindow",
+        "port": "actor"
+      },
+      "tgt": {
+        "process": "GhostDisplayer",
+        "port": "ghostwindow"
+      }
+    },
+    {
+      "src": {
+        "process": "Window",
+        "port": "out"
+      },
+      "tgt": {
+        "process": "GhostDisplayer",
+        "port": "window"
+      }
+    },
+    {
+      "src": {
+        "process": "Overlapping",
+        "port": "fallbackbox"
+      },
+      "tgt": {
+        "process": "GhostDisplayer",
+        "port": "box"
+      }
+    }
+  ],
+  "exports": [
+    {
+      "private": "filterwindow.in",
+      "public": "window"
+    },
+    {
+      "private": "overlapping.windows",
+      "public": "windows"
+    },
+    {
+      "private": "moveaddx.addend",
+      "public": "dx"
+    },
+    {
+      "private": "moveaddy.addend",
+      "public": "dy"
+    },
+    {
+      "private": "areawidth.in",
+      "public": "areawidth"
+    },
+    {
+      "private": "areaheight.in",
+      "public": "areaheight"
+    },
+    {
+      "private": "snapwindow.xsnapping",
+      "public": "xsnapping"
+    },
+    {
+      "private": "snapwindow.ysnapping",
+      "public": "ysnapping"
+    },
+    {
+      "private": "snapwindow.xdivsnapping",
+      "public": "xdivsnapping"
+    },
+    {
+      "private": "snapwindow.ydivsnapping",
+      "public": "ydivsnapping"
+    }
+  ]
+}

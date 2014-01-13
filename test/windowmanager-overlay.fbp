@@ -1,0 +1,202 @@
+WindowManager(WindowManager) MOVEBEGIN     -> MOVEBEGIN     WindowSelector(WindowSelector)
+WindowManager()              MOVEEND       -> MOVEEND       WindowSelector()
+WindowManager()              RESIZEBEGIN   -> RESIZEBEGIN   WindowSelector()
+WindowManager()              RESIZEEND     -> RESIZEEND     WindowSelector()
+WindowManager()              MOVEUPDATEX   -> MOVEUPDATEX   WindowSelector()
+WindowManager()              MOVEUPDATEY   -> MOVEUPDATEY   WindowSelector()
+WindowManager()              RESIZEUPDATEX -> RESIZEUPDATEX WindowSelector()
+WindowManager()              RESIZEUPDATEY -> RESIZEUPDATEY WindowSelector()
+WindowManager()              RESIZERATIOX  -> RESIZERATIOX  WindowSelector()
+WindowManager()              RESIZERATIOY  -> RESIZERATIOY  WindowSelector()
+
+
+#
+# Creating/destroying windows
+#
+WindowManager() ADDWINDOW -> IN Appear(WindowAppearAnimation)
+WindowManager() CLOSEWINDOW -> IN Close(WindowCloseAnimation)
+Close() OUT -> DESTROYWINDOW WindowManager()
+
+
+#
+# Shared stuff
+#
+MoveMergeActor(Merge) OUT -> ACTOR Move(ActorMove)
+MoveMergeX(Merge) OUT -> X Move()
+MoveMergeY(Merge) OUT -> Y Move()
+
+ResizeMergeActor(Merge) OUT -> ACTOR Resize(ActorResize)
+ResizeMergeWidth(Merge) OUT -> WIDTH Resize()
+ResizeMergeHeight(Merge) OUT -> HEIGHT Resize()
+
+
+#
+# Moving windows
+#
+WindowSelector()   MOVEWINDOW -> IN FilterMoveWindow(FilterMoveResizeWindow)
+FilterMoveWindow() OUT        -> IN MoveMergeActor()
+
+'x'                          -> PROPERTY MoveInitialX(GetProperty)
+WindowSelector() MOVEWINDOW  -> OBJECT   MoveInitialX()
+MoveInitialX()   VALUE       -> AUGEND   MoveAddX(Add)
+WindowManager()  MOVEUPDATEX -> ADDEND   MoveAddX()
+MoveAddX()       SUM         -> IN       MoveMergeX(Merge)
+
+'y'                          -> PROPERTY MoveInitialY(GetProperty)
+WindowSelector() MOVEWINDOW  -> OBJECT   MoveInitialY()
+MoveInitialY()   VALUE       -> AUGEND   MoveAddY(Add)
+WindowManager()  MOVEUPDATEY -> ADDEND   MoveAddY()
+MoveAddY()       SUM         -> IN       MoveMergeY(Merge)
+
+
+#
+# Resizing windows
+#
+
+WindowSelector()     RESIZEWINDOW -> IN FilterResizeWindow(FilterMoveResizeWindow)
+FilterResizeWindow() OUT          -> IN MoveMergeActor()
+FilterResizeWindow() OUT          -> IN ResizeMergeActor()
+
+WindowSelector() RESIZEWINDOW -> WINDOW WindowResize(WindowResize)
+WindowManager() RESIZEUPDATEX -> X WindowResize()
+WindowManager() RESIZEUPDATEY -> Y WindowResize()
+WindowManager() RESIZERATIOX -> RATIOX WindowResize()
+WindowManager() RESIZERATIOY -> RATIOY WindowResize()
+
+'x' -> PROPERTY ResizeInitialX(GetProperty)
+WindowSelector() RESIZEWINDOW -> OBJECT ResizeInitialX()
+ResizeInitialX() VALUE -> AUGEND ResizeAddX(Add)
+WindowResize() X -> ADDEND ResizeAddX()
+ResizeAddX() SUM -> IN MoveMergeX()
+
+'y' -> PROPERTY ResizeInitialY(GetProperty)
+WindowSelector() RESIZEWINDOW -> OBJECT ResizeInitialY()
+ResizeInitialY() VALUE -> AUGEND ResizeAddY(Add)
+WindowResize() Y -> ADDEND ResizeAddY()
+ResizeAddY() SUM -> IN MoveMergeY()
+
+'width' -> PROPERTY ResizeInitialWidth(GetProperty)
+WindowSelector() RESIZEWINDOW -> OBJECT ResizeInitialWidth()
+ResizeInitialWidth() VALUE -> AUGEND ResizeAddWidth(Add)
+WindowResize() WIDTH -> ADDEND ResizeAddWidth()
+ResizeAddWidth() SUM -> IN ResizeMergeWidth()
+
+'height' -> PROPERTY ResizeInitialHeight(GetProperty)
+WindowSelector() RESIZEWINDOW -> OBJECT ResizeInitialHeight()
+ResizeInitialHeight() VALUE -> AUGEND ResizeAddHeight(Add)
+WindowResize() HEIGHT -> ADDEND ResizeAddHeight()
+ResizeAddHeight() SUM -> IN ResizeMergeHeight()
+
+
+#
+# Raising windows
+#
+RaiseMergeActor(Merge) OUT              -> IN    RaiseMergeActorBroad(Split)
+RaiseMergeActorBroad() OUT              -> RAISEWINDOW WindowManager()
+WindowManager()        ADDWINDOW        -> IN    RaiseMergeActor()
+WindowManager()        CLICKEDWINDOW    -> IN    RaiseMergeActor()
+WindowSelector()       MOVEWINDOW       -> IN    RaiseMergeActor()
+WindowSelector()       RESIZEWINDOW     -> IN    RaiseMergeActor()
+WindowManager()        MAXIMIZEWINDOW   -> IN    RaiseMergeActor()
+WindowManager()        UNMAXIMIZEWINDOW -> IN    RaiseMergeActor()
+
+
+#
+# Maximize windows
+#
+WindowManager() VISIBLEWINDOWS   -> WINDOWS     Maximizer(WindowMaximizer)
+WindowManager() ADDWINDOW        -> NEW         Maximizer()
+WindowManager() CLOSEWINDOW      -> DESTROY     Maximizer()
+WindowManager() MAXIMIZEWINDOW   -> MAXIMIZE    Maximizer()
+Minimizer()     MINIMIZING       -> MINIMIZE    Maximizer()
+WindowManager() AREAWIDTH        -> AREAWIDTH   Maximizer()
+WindowManager() AREAHEIGHT       -> AREAHEIGHT  Maximizer()
+Maximizer()     MAXIMIZED        -> MAXIMIZED   WindowManager()
+Maximizer()     UNMAXIMIZED      -> UNMAXIMIZED WindowManager()
+
+Unmaximize(Merge) OUT              -> UNMAXIMIZE  Maximizer()
+WindowManager()   UNMAXIMIZEWINDOW -> IN          Unmaximize()
+
+
+#
+# Minimize windows
+#
+WindowManager()       MINIMIZEWINDOW -> WINDOW      PreMiniWinToApp(WindowToApplication)
+PreMiniWinToApp()     APPLICATION    -> APPLICATION MinimizeDestination(PanelIconPosition)
+MinimizeDestination() BOX            -> BOX         Minimizer(WindowMinimizer)
+WindowManager()       MINIMIZEWINDOW -> MINIMIZE    Minimizer()
+Minimizer()           MINIMIZING     -> WINDOW      PostMiniWinToApp(WindowToApplication)
+PostMiniWinToApp()    APPLICATION    -> MINIMIZED   Panel(Panel)
+Minimizer()           MINIMIZED      -> MINIMIZED   WindowManager()
+
+#
+# Unminimize windows
+#
+Close()                     OUT            -> DESTROY     NoMaximize(WindowEnsureNoMaximize)
+Maximizer()                 MAXIMIZED      -> MAXIMIZED   NoMaximize()
+Maximizer()                 UNMAXIMIZED    -> UNMAXIMIZED NoMaximize()
+NoMaximize()                UNMAXIMIZE     -> IN          Unmaximize()
+
+NoMaximize()                OUT            -> WINDOW      PreUnminiWinToApp(WindowToApplication)
+PreUnminiWinToApp()         APPLICATION    -> APPLICATION UnminimizeSource(PanelIconPosition)
+NoMaximize()                OUT            -> WINDOW      Unminimizer(WindowUnminimizer)
+UnminimizeSource()          BOX            -> BOX         Unminimizer()
+
+Unminimizer()               UNMINIMIZING   -> WINDOW      PostUnminiWinToApp(WindowToApplication)
+PostUnminiWinToApp()        APPLICATION    -> UNMINIMIZED Panel()
+
+Unminimizer()               UNMINIMIZED    -> UNMINIMIZED WindowManager()
+Unminimizer()               UNMINIMIZING   -> IN          RaiseMergeActor()
+
+MaximizerMiniMerge(Merge)   OUT            -> UNMINIMIZE  Maximizer()
+
+Unminimizer()               UNMINIMIZED    -> IN          MaximizerMiniMerge()
+
+
+#
+# Focus
+#
+WindowManager()        VISIBLEWINDOWS -> WINDOWS FocusManager(WindowFocusManager)
+RaiseMergeActorBroad() OUT            -> SELECT  FocusManager()
+Close()                OUT            -> DESTROY FocusManager()
+WindowManager()        ADDWINDOW      -> CREATE  FocusManager()
+
+'focused' -> KLASS AddFocusStyle(WidgetAddStyleClass)
+FocusManager FOCUSIN -> WIDGET AddFocusStyle()
+'focused' -> KLASS RemoveFocusStyle(WidgetRemoveStyleClass)
+FocusManager FOCUSOUT -> WIDGET RemoveFocusStyle()
+
+
+#
+# Placement
+#
+WindowManager() WINDOWS    -> WINDOWS    Placer(WindowOverlayPlacer)
+WindowManager() ADDWINDOW  -> WINDOW     Placer()
+WindowManager() AREAWIDTH  -> AREAWIDTH  Placer()
+WindowManager() AREAHEIGHT -> AREAHEIGHT Placer()
+
+Placer() PLACEDWINDOW -> ACTOR      WindowInitialPosition(ActorSetProperties)
+Placer() PLACEDBOX    -> PROPERTIES WindowInitialPosition()
+
+
+#
+# Panel
+#
+ApplicationClick(Merge) OUT             -> APPLICATIONID ApplicationFinder(ApplicationFinder)
+
+Panel()              CLICKEDAPPLICATION -> IN            ApplicationClick()
+Panel()              CLICKEDDRAWER      -> OPENDRAWER    DrawerOpener(PanelDrawerOpener)
+
+'drawerLayer'                           -> NAME          DrawerLayer(Actor)
+DrawerLayer()        ACTOR              -> DRAWERLAYER   DrawerOpener()
+
+DrawerOpener()       CLICKEDAPPLICATION -> IN            ApplicationClick()
+
+WindowManager()      WINDOWS            -> WINDOWS       ApplicationFinder()
+ApplicationFinder()  RAISE              -> IN            RaiseMergeActor()
+ApplicationFinder()  RAISE              -> SELECT        Maximizer()
+ApplicationFinder()  UNMINIMIZE         -> IN            NoMaximize()
+ApplicationFinder()  START              -> START         ApplicationLauncher(ApplicationLauncher)
+ApplicationLauncher() STARTED           -> OPENED        Panel()
+Close()               OUT               -> WINDOW        WindowToApplication(WindowToApplication)
+WindowToApplication() APPLICATION       -> CLOSED        Panel()
