@@ -55,47 +55,9 @@ module.exports = ->
       files: ['spec/*.coffee', 'components/*.coffee', 'graphs/*.json']
       tasks: ['test']
 
-    # BDD tests on browser
-    mocha_phantomjs:
-      options:
-        output: 'spec/result.xml'
-        reporter: 'dot'
-      all: ['spec/runner.html']
-
     # Coding standards
     coffeelint:
       components: ['components/*.coffee']
-
-    # Cross-browser testing
-    connect:
-      server:
-        options:
-          base: ''
-          port: 9999
-
-    'saucelabs-mocha':
-      all:
-        options:
-          urls: ['http://127.0.0.1:9999/spec/runner.html']
-          browsers: [
-              browserName: 'chrome'
-            ,
-              browserName: 'firefox'
-            ,
-              browserName: 'safari'
-              platform: 'OS X 10.8'
-              version: '6'
-            ,
-              browserName: 'opera'
-            ,
-              browserName: 'internet explorer'
-              platform: 'WIN8'
-              version: '10'
-          ]
-          build: process.env.TRAVIS_JOB_ID
-          testname: 'noflo-clutter browser tests'
-          tunnelTimeout: 5
-          concurrency: 3
 
   # Grunt plugins used for building
   @loadNpmTasks 'grunt-contrib-coffee'
@@ -106,12 +68,7 @@ module.exports = ->
 
   # Grunt plugins used for testing
   @loadNpmTasks 'grunt-contrib-watch'
-  @loadNpmTasks 'grunt-mocha-phantomjs'
   @loadNpmTasks 'grunt-coffeelint'
-
-  # Grunt plugins used for browser testing
-  @loadNpmTasks 'grunt-contrib-connect'
-  @loadNpmTasks 'grunt-saucelabs'
 
   # Our local tasks
   @registerTask 'build', 'Build NoFlo for the chosen target platform', (target = 'all') =>
@@ -129,8 +86,5 @@ module.exports = ->
       @task.run 'component'
       @task.run 'component_build'
       @task.run 'combine'
-      @task.run 'mocha_phantomjs'
-
-  @registerTask 'crossbrowser', 'Run tests on real browsers', ['test', 'connect', 'saucelabs-mocha']
 
   @registerTask 'default', ['test']
