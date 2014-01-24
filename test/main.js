@@ -14,6 +14,7 @@ const MainBar = imports.ui.mainBar;
 const Panel = imports.ui.panel;
 const Window = imports.ui.window;
 const WindowManager = imports.windowManager;
+const WebUIServer = imports.webUiServer;
 
 /* NoFlo glue */
 let NoFloContext = imports.browser['noflo-clutter'];
@@ -160,39 +161,43 @@ mainBox.add(bottomBar, { x_fill: true,
 
 /* Graph */
 
-let currentNetwork = null;
-let currentGraph = null;
+// let currentNetwork = null;
+// let currentGraph = null;
 
-let loadGraph = function(filename) {
-    if (currentNetwork) {
-        log('stopping previous network');
-        currentNetwork.stop();
-        currentNetwork = null;
-    }
+// let loadGraph = function(filename) {
+//     if (currentNetwork) {
+//         log('stopping previous network');
+//         currentNetwork.stop();
+//         currentNetwork = null;
+//     }
 
-    log('loading graph ' + filename);
-    currentGraph = filename;
+//     log('loading graph ' + filename);
+//     currentGraph = filename;
 
-    let file = Gio.File.new_for_path(filename);
-    let [, content] = file.load_contents(null);
-    NoFlo.graph.loadFBP('' + content, function (graph) {
-        graph.baseDir = '/noflo-clutter';
-        log('Graph loaded');
+//     let file = Gio.File.new_for_path(filename);
+//     let [, content] = file.load_contents(null);
+//     NoFlo.graph.loadFBP('' + content, function (graph) {
+//         graph.baseDir = '/noflo-clutter';
+//         log('Graph loaded');
 
-        NoFlo.createNetwork(graph, function (network) {
-            log("Network created");
-            currentNetwork = network;
-            currentNetwork.start();
-            windowManager.reinit();
-        });
-    });
-};
+//         NoFlo.createNetwork(graph, function (network) {
+//             log("Network created");
+//             currentNetwork = network;
+//             currentNetwork.start();
+//             windowManager.reinit();
+//         });
+//     });
+// };
 
-let switchGraphs = function() {
-    loadGraph(currentGraph == './windowmanager-overlay.fbp' ? './windowmanager-unconstrained.fbp' : './windowmanager-overlay.fbp');
-};
+// let switchGraphs = function() {
+//     loadGraph(currentGraph == './windowmanager-overlay.fbp' ? './windowmanager-unconstrained.fbp' : './windowmanager-overlay.fbp');
+// };
 
-loadGraph(Config.GNOME ? './windowmanager-overlay.fbp' : './windowmanager-unconstrained.fbp');
+// loadGraph(Config.GNOME ? './windowmanager-overlay.fbp' : './windowmanager-unconstrained.fbp');
+
+/**/
+
+WebUIServer.getDefault().start();
 
 /**/
 
