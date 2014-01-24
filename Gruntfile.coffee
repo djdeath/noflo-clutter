@@ -50,6 +50,28 @@ module.exports = ->
         files:
           './browser/noflo-clutter.min.js': ['./browser/noflo-clutter.js']
 
+    # Editor's UI
+    exec:
+      nuke_main:
+        command: 'rm -rf ./components/*/'
+      main_install:
+        command: './node_modules/.bin/component install'
+      main_build:
+        command: './node_modules/.bin/component build -u component-json,component-coffee -o assets/browser -n noflo-ui -c'
+      preview_deps:
+        command: 'npm install'
+        stdout: false
+        stderr: false
+        cwd: 'components/noflo-noflo-ui/preview'
+      preview_install:
+        command: './node_modules/.bin/component install'
+        cwd: 'components/noflo-noflo-ui/preview'
+      preview_build:
+        command: './node_modules/.bin/component build -u component-json,component-coffee -o ../../../assets/preview/browser -n noflo-ui-preview -c'
+        cwd: 'components/noflo-noflo-ui/preview'
+      copy_index:
+        command: 'cp -R assets/browser/noflo-noflo-ui/* assets/'
+
     # Automated recompilation and testing when developing
     watch:
       files: ['spec/*.coffee', 'components/*.coffee', 'graphs/*.json']
@@ -69,6 +91,7 @@ module.exports = ->
   # Grunt plugins used for testing
   @loadNpmTasks 'grunt-contrib-watch'
   @loadNpmTasks 'grunt-coffeelint'
+  @loadNpmTasks 'grunt-exec'
 
   # Our local tasks
   @registerTask 'build', 'Build NoFlo for the chosen target platform', (target = 'all') =>
@@ -78,6 +101,7 @@ module.exports = ->
       @task.run 'component_build'
       @task.run 'combine'
       @task.run 'uglify'
+      @task.run 'exec'
 
   @registerTask 'test', 'Build NoFlo and run automated tests', (target = 'all') =>
     @task.run 'coffeelint'
