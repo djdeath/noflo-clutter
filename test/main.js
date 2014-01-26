@@ -15,6 +15,7 @@ const Panel = imports.ui.panel;
 const Window = imports.ui.window;
 const WindowManager = imports.windowManager;
 const WebUIServer = imports.webUiServer;
+const WebProtoServer = imports.webProtoServer;
 
 /* NoFlo glue */
 let NoFloContext = imports.browser['noflo-clutter'];
@@ -199,6 +200,7 @@ mainBox.add(bottomBar, { x_fill: true,
 /**/
 
 WebUIServer.getDefault().start();
+WebProtoServer.getDefault().start();
 
 /**/
 
