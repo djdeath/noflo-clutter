@@ -55,6 +55,7 @@ let _hideCursorTimeout = null
 let startHideCursorTimeout = function() {
     _hideCursorTimeout = Mainloop.timeout_add_seconds(5, Lang.bind(this, function() {
         stage.hide_cursor();
+        _hideCursorTimeout = null;
         return false;
     }));
 };
