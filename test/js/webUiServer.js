@@ -74,6 +74,8 @@ const WebUIServer = new Lang.Class({
     /* Libsoup handler */
 
     mainHandler: function(server, msg, path, query, client) {
+        if (path == '/')
+            path = '/index.html';
         this.payloadHandler(server, msg, path, query, client);
     },
 
