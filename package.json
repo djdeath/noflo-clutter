@@ -19,6 +19,7 @@
   "dependencies": {
     "noflo": "~0.3.3",
     "noflo-core": "~0.1.0",
+    "noflo-ui": "git://github.com/noflo/noflo-ui.git#the-graph",
     "fbp": "~1.0.3"
   },
   "devDependencies": {

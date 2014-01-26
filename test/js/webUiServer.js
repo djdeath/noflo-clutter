@@ -93,7 +93,7 @@ let server = null;
 let getDefault = function() {
     if (server == null) {
         server = new WebUIServer({ port: 1080,
-                                   directories: [ '../assets', ], });
+                                   directories: [ '../node_modules/noflo-ui', ], });
     }
 
     return server;
