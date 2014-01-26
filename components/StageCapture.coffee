@@ -13,14 +13,18 @@ class StageCapture extends noflo.Component
     @stageManager = @Clutter.StageManager.get_default()
     @stage = @stageManager.list_stages()[0]
 
-    @stage.connect('captured-event', @Lang.bind(this, @capturedEvent))
+    @capturedId = @stage.connect('captured-event', @Lang.bind(this, @capturedEvent))
+
+  shutdown: ->
+    @stage.disconnect(@capturedId)
+    delete @capturedId
 
   capturedEvent: (actor, event) =>
     switch event.type()
       when @Clutter.EventType.MOTION
         [x, y] = event.get_coords()
-        @outPorts.x.send x
-        @outPorts.y.send y
+        @outPorts.x.send x if @outPorts.x.isAttached()
+        @outPorts.y.send y if @outPorts.y.isAttached()
         return true
       else
         return false
