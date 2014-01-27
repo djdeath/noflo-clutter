@@ -6,6 +6,7 @@ User interaction components for NoFlo with Clutter/gjs environment
 
     $ npm install
     $ npm install -g grunt-cli
+    $ grunt ui
     $ grunt build
 
 ### Tests
