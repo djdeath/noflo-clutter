@@ -103,6 +103,7 @@ const WebProtoServer = new Lang.Class({
 
         for (let i in this.signals)
             this.connection.disconnect(this.signals[i]);
+        this.signals = [];
         this.connection = null;
     },
 
