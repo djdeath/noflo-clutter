@@ -24,8 +24,8 @@ class StageCapture extends noflo.Component
     switch event.type()
       when @Clutter.EventType.MOTION
         [x, y] = event.get_coords()
-        @outPorts.x.send x if @outPorts.x.isAttached()
-        @outPorts.y.send y if @outPorts.y.isAttached()
+        @outPorts.x.send(x) if @outPorts.x.isAttached()
+        @outPorts.y.send(y) if @outPorts.y.isAttached()
         return true
       else
         return false
