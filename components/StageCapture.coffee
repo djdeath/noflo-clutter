@@ -16,8 +16,9 @@ class StageCapture extends noflo.Component
     @capturedId = @stage.connect('captured-event', @Lang.bind(this, @capturedEvent))
 
   shutdown: ->
-    @stage.disconnect(@capturedId)
-    delete @capturedId
+    if @capturedId
+      @stage.disconnect(@capturedId)
+      delete @capturedId
 
   capturedEvent: (actor, event) =>
     switch event.type()
