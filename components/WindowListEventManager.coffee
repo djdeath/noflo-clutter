@@ -4,6 +4,7 @@ class WindowManager extends noflo.Component
   description: 'Expose the value of a property of an object'
   constructor: ->
     @inPorts =
+      start: new noflo.ArrayPort 'boolean'
       maximized: new noflo.ArrayPort 'object'
       unmaximized: new noflo.ArrayPort 'object'
       minimized: new noflo.ArrayPort 'object'
@@ -48,6 +49,26 @@ class WindowManager extends noflo.Component
     @windowManager = imports.windowManager.getDefault()
     @windowManagerIds = []
 
+    @inPorts.maximized.on 'data', (win) =>
+      @windowManager.maximized(win)
+    @inPorts.unmaximized.on 'data', (win) =>
+      @windowManager.unmaximized(win)
+    @inPorts.minimized.on 'data', (win) =>
+      @windowManager.minimized(win)
+    @inPorts.unminimized.on 'data', (win) =>
+      @windowManager.unminimized(win)
+    @inPorts.destroywindow.on 'data', (win) =>
+      @windowManager.destroyWindow(win)
+    @inPorts.raisewindow.on 'data', (win) =>
+      @windowManager.raiseWindow(win)
+
+    # Initialization (propagate default values into the graph)
+    @inPorts.start.on 'data', () =>
+      @startup()
+
+
+  startup: ->
+    @stop()
     @connectWindowManager('move-begin', @Lang.bind(this, @moveBegin))
     @connectWindowManager('move-end', @Lang.bind(this, @moveEnd))
     @connectWindowManager('move-update', @Lang.bind(this, @moveUpdate))
@@ -75,23 +96,15 @@ class WindowManager extends noflo.Component
     @connectWindowManager('pre-resize-begin', @Lang.bind(this, @preResizeBegin))
     @connectWindowManager('pre-resize-end', @Lang.bind(this, @preResizeEnd))
 
-    @inPorts.maximized.on 'data', (win) =>
-      @windowManager.maximized(win)
-    @inPorts.unmaximized.on 'data', (win) =>
-      @windowManager.unmaximized(win)
-    @inPorts.minimized.on 'data', (win) =>
-      @windowManager.minimized(win)
-    @inPorts.unminimized.on 'data', (win) =>
-      @windowManager.unminimized(win)
-    @inPorts.destroywindow.on 'data', (win) =>
-      @windowManager.destroyWindow(win)
-    @inPorts.raisewindow.on 'data', (win) =>
-      @windowManager.raiseWindow(win)
+    @windowManager.reinit()
 
-  shutdown: ->
+  stop: ->
     for id in @windowManagerIds
       @windowManager.disconnect(id)
     @windowManagerIds = []
+
+  shutdown: ->
+    @stop()
 
   connectWindowManager: (signalName, callback) =>
     id = @windowManager.connect(signalName, callback)
