@@ -4,6 +4,7 @@ class Panel extends noflo.Component
   description: ''
   constructor: ->
     @inPorts =
+      start: new noflo.Port 'boolean'
       closed: new noflo.Port 'string'
       opened: new noflo.Port 'string'
       minimized: new noflo.Port 'string'
@@ -26,6 +27,11 @@ class Panel extends noflo.Component
     @inPorts.unminimized.on 'data', (appId) =>
      @panel.setMinimized(appId, false)
 
+    @inPorts.start.on 'data', () =>
+      @stop()
+      @start()
+
+  start: ->
     @connectPanel('drawer-clicked', @Lang.bind(this, (panel, button, drawer) =>
       obj =
         button: button
@@ -38,10 +44,13 @@ class Panel extends noflo.Component
         @outPorts.clickedapplication.send(appId)
         @outPorts.clickedapplication.disconnect()))
 
-  shutdown: ->
+  stop: ->
     for id in @panelIds
       @panel.disconnect(id)
     @panelIds = []
+
+  shutdown: ->
+    @stop()
 
   connectPanel: (signalName, callback) =>
     id = @panel.connect(signalName, callback)
