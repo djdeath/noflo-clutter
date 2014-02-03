@@ -16,7 +16,7 @@ class CoglPipelineSetTexture extends StateComponent
     @connectDataPort('texture', @inPorts.texture)
     @connectParamPort('texture', @inPorts.texture)
 
-    @Cogl = imports.gi.Cogl
+    @Clutter = imports.gi.Clutter
     @ctx = @Clutter.get_default_backend().get_cogl_context();
 
   process: (state) ->
