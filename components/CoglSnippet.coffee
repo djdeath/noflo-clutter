@@ -1,6 +1,7 @@
-noflo_clutter = require 'noflo-clutter'
+noflo = require 'noflo'
+{StateComponent} = require '../lib/StateComponent'
 
-class CoglSnippet extends noflo_clutter.StateComponent
+class CoglSnippet extends StateComponent
   description: 'CoglSnippet'
   constructor: ->
     super()

@@ -1,6 +1,7 @@
-noflo_clutter = require 'noflo-clutter'
+noflo = require 'noflo'
+{StateComponent} = require '../lib/StateComponent'
 
-class CoglPipelineSetTexture extends noflo_clutter.StateComponent
+class CoglPipelineSetTexture extends StateComponent
   description: 'Set a texture on a CoglPipeline'
   constructor: ->
     super()

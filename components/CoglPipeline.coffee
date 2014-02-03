@@ -1,6 +1,7 @@
-noflo_clutter = require 'noflo-clutter'
+noflo = require 'noflo'
+{StateComponent} = require '../lib/StateComponent'
 
-class CoglPipeline extends noflo_clutter.StateComponent
+class CoglPipeline extends StateComponent
   description: 'creates a new CoglPipeline'
   constructor: ->
     super()

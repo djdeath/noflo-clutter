@@ -30,4 +30,4 @@ class StateComponent extends noflo.Component
     port.on 'disconnect', () =>
       @data_state[name] = null
 
-exports.getComponent = -> new StateComponent
+exports.StateComponent = StateComponent
