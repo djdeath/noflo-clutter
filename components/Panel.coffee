@@ -15,7 +15,6 @@ class Panel extends noflo.Component
       clickedapplication: new noflo.ArrayPort 'string'
 
     @Lang = imports.lang
-    @panel = imports.ui.panel.getDefault();
     @panelIds = []
 
     @inPorts.closed.on 'data', (appId) =>
@@ -32,6 +31,7 @@ class Panel extends noflo.Component
       @start()
 
   start: ->
+    @panel = imports.ui.panel.getDefault();
     @connectPanel('drawer-clicked', @Lang.bind(this, (panel, button, drawer) =>
       obj =
         button: button
