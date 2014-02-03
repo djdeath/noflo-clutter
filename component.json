@@ -76,7 +76,8 @@
     "graphs/MoveWindowConstrained.json",
     "graphs/ResizeWindow.json",
     "graphs/ResizeWindowConstrained.json",
-    "index.js"
+    "index.js",
+    "src/StateComponent.coffee"
   ],
   "json": [
     "component.json",
