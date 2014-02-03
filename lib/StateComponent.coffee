@@ -26,7 +26,7 @@ class StateComponent extends noflo.Component
     port.on 'data', (value) =>
       @data_state[name] = value
       if @canProcess()
-        @process(@data_state)
+        @process(@data_state, @param_state)
         @data_state = {}
     port.on 'disconnect', () =>
       @data_state[name] = null
