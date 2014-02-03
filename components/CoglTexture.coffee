@@ -4,6 +4,7 @@ noflo = require 'noflo'
 class CoglTexture extends StateComponent
   description: 'creates a new CoglTexture from a file'
   constructor: ->
+    super()
     @inPorts =
       filename: new noflo.Port 'string'
       context: new noflo.Port 'object'
