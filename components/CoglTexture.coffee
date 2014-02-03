@@ -1,19 +1,24 @@
 noflo = require 'noflo'
+{StateComponent} = require '../lib/StateComponent'
 
-class CoglTexture extends noflo.Component
+class CoglTexture extends StateComponent
   description: 'creates a new CoglTexture from a file'
   constructor: ->
     @inPorts =
       filename: new noflo.Port 'string'
-
+      context: new noflo.Port 'object'
     @outPorts =
       texture: new noflo.ArrayPort 'object'
 
-    @Clutter = imports.gi.Clutter
-    @ctx = @Clutter.get_default_backend().get_cogl_context()
+    @connectParamPort('context', @inPorts.context)
+    @connectDataPort('filename', @inPorts.filename)
 
-    @inPorts.filename.on 'data', (filename) =>
-      texture = Cogl.Texture2D.new_from_file(@ctx, filename, Cogl.TextureFlags.NO_ATLAS, Cogl.PixelFormat.ANY)
+    @Cogl = imports.gi.Cogl
+
+  process: (state) ->
+    if @outPorts.texture.isAttached()
+      texture = @cogl.Texture2D.new_from_file(state.context, state.filename, Cogl.TextureFlags.NO_ATLAS, Cogl.PixelFormat.ANY)
       @outPorts.texture.send(texture)
+      @outPorts.texture.disconnect()
 
 exports.getComponent = -> new CoglTexture
