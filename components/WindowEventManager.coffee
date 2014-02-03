@@ -32,7 +32,6 @@ class WindowEventManager extends noflo.Component
       minimizewindow: new noflo.ArrayPort 'object'
 
     @Lang = imports.lang
-    @windowManager = imports.windowManager.getDefault()
     @windowManagerIds = []
 
     # Initialization (propagate default values into the graph)
@@ -41,6 +40,8 @@ class WindowEventManager extends noflo.Component
 
 
   startup: ->
+    @windowManager = imports.windowManager.getDefault()
+
     @stop()
     @connectWindowManager('move-begin', @Lang.bind(this, @moveBegin))
     @connectWindowManager('move-end', @Lang.bind(this, @moveEnd))
