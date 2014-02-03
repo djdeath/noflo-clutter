@@ -6,18 +6,17 @@ class CoglPipeline extends noflo_clutter.StateComponent
     super()
     @inPorts =
       start: new noflo.Port 'boolean'
+      context: new noflo.Port 'context'
     @outPorts =
       pipeline: new noflo.ArrayPort 'object'
 
-    @connectParamPort('hook', @inPorts.hook)
-    @connectDataPort('code', @inPorts.code)
-
-    @Cogl = imports.gi.Cogl
-    @ctx = @Clutter.get_default_backend().get_cogl_context();
+    @connectParamPort('start', @inPorts.start)
+    @connectDataPort('context', @inPorts.context)
 
   process: (state) ->
     if @outPorts.pipeline.isAttached()
-      pipeline = new @Cogl.Pipeline(ctx)
+      pipeline = new @Cogl.Pipeline(state.context)
       @outPorts.pipeline.send(pipeline)
+      @outPorts.pipeline.disconnect()
 
 exports.getComponent = -> new CoglPipeline
