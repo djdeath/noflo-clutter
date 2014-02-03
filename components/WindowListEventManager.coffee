@@ -23,7 +23,6 @@ class WindowListEventManager extends noflo.Component
       areaheight: new noflo.ArrayPort 'number'
 
     @Lang = imports.lang
-    @windowManager = imports.windowManager.getDefault()
     @windowManagerIds = []
 
     @inPorts.maximized.on 'data', (win) =>
@@ -45,6 +44,7 @@ class WindowListEventManager extends noflo.Component
 
 
   startup: ->
+    @windowManager = imports.windowManager.getDefault()
     @stop()
     @connectWindowManager('add-window', @Lang.bind(this, @addWindow))
 
