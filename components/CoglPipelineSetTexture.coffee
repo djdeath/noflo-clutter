@@ -13,12 +13,10 @@ class CoglPipelineSetTexture extends noflo_clutter.StateComponent
 
     @connectDataPort('pipeline', @inPorts.pipeline)
     @connectDataPort('texture', @inPorts.texture)
+    @connectParamPort('texture', @inPorts.texture)
 
     @Cogl = imports.gi.Cogl
     @ctx = @Clutter.get_default_backend().get_cogl_context();
-
-  can_process: (state) ->
-    return state.pipeline && state.texture && state.layer
 
   process: (state) ->
     if @outPorts.pipeline.isAttached()

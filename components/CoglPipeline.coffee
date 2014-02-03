@@ -15,9 +15,6 @@ class CoglPipeline extends noflo_clutter.StateComponent
     @Cogl = imports.gi.Cogl
     @ctx = @Clutter.get_default_backend().get_cogl_context();
 
-  can_process: (state) ->
-    return state.start
-
   process: (state) ->
     if @outPorts.pipeline.isAttached()
       pipeline = new @Cogl.Pipeline(ctx)

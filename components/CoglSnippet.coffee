@@ -14,9 +14,6 @@ class CoglSnippet extends noflo_clutter.StateComponent
     @connectDataPort('code', @inPorts.code)
     @Cogl = imports.gi.Cogl
 
-  can_process: (state) ->
-    return (state.code && state.hook)
-
   process: (state) ->
     snippet = new @Cogl.Snippet(Cogl.SnippetHook[state.hook], '', state.code)
     @outPorts.snippet.send(snippet) if @outPorts.snippet.isAttached()
