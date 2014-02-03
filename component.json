@@ -84,7 +84,7 @@
     "graphs/ResizeWindow.json",
     "graphs/ResizeWindowConstrained.json",
     "index.js",
-    "src/StateComponent.coffee"
+    "lib/StateComponent.coffee"
   ],
   "json": [
     "component.json",
