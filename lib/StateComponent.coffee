@@ -6,6 +6,7 @@ class StateComponent extends noflo.Component
   constructor: ->
     @param_state = {}
     @data_state = {}
+    @input_required = {}
 
   canProcess: () =>
     for el of @input_required
