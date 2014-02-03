@@ -11,7 +11,8 @@ class ClutterCoglContext extends noflo.Component
 
     @inPorts.start.on 'data', () =>
       if @outPorts.context.isAttached()
-        @outPorts.context.send(Clutter.get_cogl_context())
-        @outPorts.disconnect()
+        backend = Clutter.get_default_backend()
+        @outPorts.context.send(backend.get_cogl_context())
+        @outPorts.context.disconnect()
 
 exports.getComponent = -> new ClutterCoglContext
