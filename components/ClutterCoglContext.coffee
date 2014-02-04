@@ -1,5 +1,7 @@
 noflo = require 'noflo'
 
+Clutter = imports.gi.Clutter
+
 class ClutterCoglContext extends noflo.Component
   description: 'Gets the CoglContext attached used by Clutter'
   constructor: ->
@@ -8,6 +10,7 @@ class ClutterCoglContext extends noflo.Component
       start: new noflo.Port 'boolean'
     @outPorts =
       context: new noflo.ArrayPort 'object'
+
 
     @inPorts.start.on 'data', () =>
       if @outPorts.context.isAttached()
