@@ -14,7 +14,7 @@ class CoglTexture extends StateComponent
       texture: new noflo.ArrayPort 'object'
 
     @connectParamPort('context', @inPorts.context)
-    @connectDataPort('filename', @inPorts.filename)
+    @connectParamPort('filename', @inPorts.filename)
 
   process: (state) ->
     if @outPorts.texture.isAttached()
