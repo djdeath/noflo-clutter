@@ -1,5 +1,6 @@
 noflo = require 'noflo'
 {StateComponent} = require '../lib/StateComponent'
+Cogl = imports.gi.Cogl
 
 class CoglPipeline extends StateComponent
   description: 'creates a new CoglPipeline'
@@ -16,7 +17,7 @@ class CoglPipeline extends StateComponent
 
   process: (state) ->
     if @outPorts.pipeline.isAttached()
-      pipeline = new @Cogl.Pipeline(state.context)
+      pipeline = new Cogl.Pipeline(state.context)
       @outPorts.pipeline.send(pipeline)
       @outPorts.pipeline.disconnect()
 
