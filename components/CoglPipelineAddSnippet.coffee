@@ -20,5 +20,6 @@ class CoglPipelineAddSnippet extends StateComponent
     if @outPorts.pipeline.isAttached()
       state.pipeline.add_snippet(state.snippet)
       @outPorts.pipeline.send(state.pipeline)
+      @outPorts.pipeline.disconnect()
 
 exports.getComponent = -> new CoglPipelineAddSnippet
