@@ -9,7 +9,7 @@ class CoglPipelineCopy extends noflo.Component
     @outPorts =
       pipeline: new noflo.ArrayPort 'object'
 
-    @inPorts.pipeline.on 'data', (pipeline) ->
+    @inPorts.pipeline.on 'data', (pipeline) =>
       @outPorts.pipeline.send(pipeline.copy()) if @outPorts.pipeline.isAttached()
 
 exports.getComponent = -> new CoglPipelineCopy
