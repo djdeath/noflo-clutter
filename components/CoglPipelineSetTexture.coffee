@@ -12,12 +12,9 @@ class CoglPipelineSetTexture extends StateComponent
     @outPorts =
       pipeline: new noflo.ArrayPort 'object'
 
-    @connectDataPort('pipeline', @inPorts.pipeline)
-    @connectDataPort('texture', @inPorts.texture)
+    @connectParamPort('pipeline', @inPorts.pipeline)
     @connectParamPort('texture', @inPorts.texture)
-
-    @Clutter = imports.gi.Clutter
-    @ctx = @Clutter.get_default_backend().get_cogl_context();
+    @connectParamPort('layer', @inPorts.layer)
 
   process: (state) ->
     if @outPorts.pipeline.isAttached()
