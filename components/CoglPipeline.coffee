@@ -13,7 +13,7 @@ class CoglPipeline extends StateComponent
       pipeline: new noflo.ArrayPort 'object'
 
     @connectParamPort('start', @inPorts.start)
-    @connectDataPort('context', @inPorts.context)
+    @connectParamPort('context', @inPorts.context)
 
   process: (state) ->
     if @outPorts.pipeline.isAttached()
