@@ -1,5 +1,6 @@
 noflo = require 'noflo'
 {StateComponent} = require '../lib/StateComponent'
+Cogl = imports.gi.Cogl
 
 class CoglSnippet extends StateComponent
   description: 'CoglSnippet'
@@ -13,10 +14,9 @@ class CoglSnippet extends StateComponent
 
     @connectParamPort('hook', @inPorts.hook)
     @connectDataPort('code', @inPorts.code)
-    @Cogl = imports.gi.Cogl
 
   process: (state) ->
-    snippet = new @Cogl.Snippet(Cogl.SnippetHook[state.hook], '', state.code)
+    snippet = new Cogl.Snippet(Cogl.SnippetHook[state.hook], '', state.code)
     @outPorts.snippet.send(snippet) if @outPorts.snippet.isAttached()
 
 exports.getComponent = -> new CoglSnippet
