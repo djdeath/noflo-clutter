@@ -3,33 +3,22 @@ noflo = require 'noflo'
 Lang = imports.lang
 GObject = imports.gi.GObject
 Clutter = imports.gi.Clutter
+ClutterUtils = imports.clutterUtils
 
-st =
-  Name: 'PipelineContent'
-  Extends: GObject.Object
-  Implements: [ Clutter.Content ]
-  _init: () ->
-    @parent()
-  vfunc_paint_content: (actor, parent) ->
-    box = actor.get_allocation_box()
-    node = new Clutter.PipelineNode(@pipeline)
-    node.add_rectangle(box)
-    parent.add_child(node)
-Content = new Lang.Class(st)
 
 class ClutterPipelineContent extends noflo.Component
   description: 'Create a ClutterContent object for a CoglPipeline'
   constructor: ->
     @inPorts =
       pipeline: new noflo.Port 'object'
-    @outPort =
+    @outPorts =
       content: new noflo.Port 'object'
 
-    @inPorts.pipeline.on 'data', () ->
-      if @outPort.content.isAttached()
-        content = new Content()
-        content.pipeline = state.pipeline
-        @outPort.content.send(content)
-        @outPort.content.disconnect()
+    @inPorts.pipeline.on 'data', (pipeline) =>
+      if @outPorts.content.isAttached()
+        content = new ClutterUtils.PipelineContent()
+        content.pipeline = pipeline
+        @outPorts.content.send(content)
+        @outPorts.content.disconnect()
 
 exports.getComponent = -> new ClutterPipelineContent
