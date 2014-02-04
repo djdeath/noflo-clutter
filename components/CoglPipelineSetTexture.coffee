@@ -20,5 +20,6 @@ class CoglPipelineSetTexture extends StateComponent
     if @outPorts.pipeline.isAttached()
       state.pipeline.set_layer_texture(state.layer, state.texture)
       @outPorts.pipeline.send(state.pipeline)
+      @outPorts.pipeline.disconnect()
 
 exports.getComponent = -> new CoglPipelineSetTexture
