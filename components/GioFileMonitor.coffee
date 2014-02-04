@@ -22,7 +22,6 @@ class GioFileMonitor extends noflo.Component
       @outPorts.changed.disconnect()
 
   start: (filename) ->
-    log('fuck: ' + filename + ' flag: ' + Gio.FileMonitorEvent.CHANGES_DONE_HINT)
     file = Gio.File.new_for_path(filename)
     @monitor = file.monitor(Gio.FileMonitorFlags.NONE, null)
     @monitorId = @monitor.connect('changed', Lang.bind(this, @changed))
