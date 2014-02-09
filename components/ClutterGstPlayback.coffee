@@ -24,7 +24,7 @@ class ClutterGstPlayback extends StateComponent
     @connectParamPort('filename', @inPorts.filename)
 
     @inPorts.stop.on 'data', (data) =>
-      @stop()
+      @stop() if @data
 
     @inPorts.volume.on 'data', (value) =>
       return unless @player
@@ -36,9 +36,10 @@ class ClutterGstPlayback extends StateComponent
 
   process: (state) ->
     @stop()
-    player = new ClutterGst.Playback()
-    player.set_filename(state.filename)
-    @start(player)
+    if state.start
+      player = new ClutterGst.Playback()
+      player.set_filename(state.filename)
+      @start(player)
 
   start: (player) ->
     @player = player

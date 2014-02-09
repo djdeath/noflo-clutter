@@ -16,13 +16,14 @@ class ClutterGstCamera extends noflo.Component
 
     @inPorts.start.on 'data', (data) =>
       @stop()
-      manager = ClutterGst.CameraManager.get_default()
-      devices = manager.get_camera_devices()
-      return if devices.length < 1
-      @start(devices[0])
+      if data
+        manager = ClutterGst.CameraManager.get_default()
+        devices = manager.get_camera_devices()
+        return if devices.length < 1
+        @start(devices[0])
 
     @inPorts.stop.on 'data', (data) =>
-      @stop()
+      @stop() if data
 
   start: (device) ->
     @camera = new ClutterGst.Camera({ device: device })
@@ -33,15 +34,16 @@ class ClutterGstCamera extends noflo.Component
       @outPorts.started.disconnect()
 
   stop: () ->
+    return unless @camera
     if @newFrameId
       @outPorts.frame.disconnect() if @outPorts.frame.isConnected()
       @camera.disconnect(@newFrameId)
       @camera.set_playing(false)
       delete @newFrameId
-      delete @camera
     if @outPorts.stopped.isAttached()
       @outPorts.stopped.send(true)
       @outPorts.stopped.disconnect()
+    delete @camera
 
   newFrame: (player, frame) ->
     @outPorts.frame.send(frame) if @outPorts.frame.isAttached()
