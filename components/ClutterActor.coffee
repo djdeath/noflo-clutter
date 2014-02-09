@@ -8,36 +8,23 @@ class ClutterActor extends noflo.Component
   constructor: ->
     @inPorts =
       active: new noflo.Port 'boolean'
-      x: new noflo.Port 'number'
-      y: new noflo.Port 'number'
-      z: new noflo.Port 'number'
-      scalex: new noflo.Port 'number'
-      scaley: new noflo.Port 'number'
-      width: new noflo.Port 'number'
-      height: new noflo.Port 'number'
-      opacity: new noflo.Port 'number'
 
     @outPorts =
       object: new noflo.Port 'object'
-      x: new noflo.Port 'number'
-      y: new noflo.Port 'number'
-      z: new noflo.Port 'number'
-      scalex: new noflo.Port 'number'
-      scaley: new noflo.Port 'number'
-      width: new noflo.Port 'number'
-      height: new noflo.Port 'number'
-      opacity: new noflo.Port 'number'
 
-    @mapping = {}
+    @portToObject = {}
+    @objectToPort = {}
     @cache = {}
-    @mapInOutPort('x', 'x')
-    @mapInOutPort('y', 'y')
-    @mapInOutPort('z', 'z-position')
-    @mapInOutPort('scalex', 'scale-x')
-    @mapInOutPort('scaley', 'scale-y')
-    @mapInOutPort('width', 'width')
-    @mapInOutPort('height', 'height')
-    @mapInOutPort('opacity', 'opacity')
+    @mapInOutPort('x', 'x', 'number')
+    @mapInOutPort('y', 'y', 'number')
+    @mapInOutPort('z', 'z-position', 'number')
+    @mapInOutPort('scalex', 'scale-x', 'number')
+    @mapInOutPort('scaley', 'scale-y', 'number')
+    @mapInOutPort('width', 'width', 'number')
+    @mapInOutPort('height', 'height', 'number')
+    @mapInOutPort('opacity', 'opacity', 'number')
+    @mapInOutPort('content', 'content', 'object')
+    @mapInOutPort('reactive', 'reactive', 'boolean')
 
     @inPorts.active.on 'data', (active) =>
       return if active && @actor
@@ -46,6 +33,10 @@ class ClutterActor extends noflo.Component
         @createActor()
       else
         @destroyActor()
+    @outPorts.object.on 'attach', (socket) =>
+      return unless @actor
+      socket.send(actor)
+      socket.disconnect()
 
   createActor: () ->
     return if @actor
@@ -53,32 +44,52 @@ class ClutterActor extends noflo.Component
     stage = stageManager.list_stages()[0]
 
     @actor = new Clutter.Actor()
-    @notifyId = @actor.connect('notify', Lang.bind(this, @onPropertyNotify))
+    @initializeObject()
     stage.add_child(@actor)
-    @outPorts.object.send(@actor) if @outPorts.object.isAttached()
-    for el of @cache
-      @actor[el] = @cache[el]
+    if @outPorts.object.isAttached()
+      @outPorts.object.send(@actor)
+      @outPorts.object.disconnect()
+    @notifyId = @actor.connect('notify', Lang.bind(this, @onPropertyNotify))
+    @initialNotify()
 
   destroyActor: () ->
     return unless @actor
     @actor.disconnect(@notifyId)
     parent = @actor.get_parent()
     parent.remove_child(@actor)
+    @actor.destroy()
     delete @actor
-    @outPorts.object.disconnect() if @outPorts.object.isConnected()
 
-  mapInOutPort: (portName, property) ->
-    @inPorts[portName].on 'data', (data) =>
+  initializeObject: () ->
+    for prop, value of @cache
+      @actor[prop] = value
+
+  initialNotify: () ->
+    for name, port of @outPorts
+      continue unless port.isAttached()
+      port.send(@actor[@portToObject[name]])
+      port.disconnect()
+
+  mapInOutPort: (portName, property, type) ->
+    inPort = @inPorts[portName] = new noflo.Port type
+    outPort = @outPorts[portName] = new noflo.Port type
+    inPort.on 'data', (data) =>
       @cache[property] = data
       @actor[property] = data if @actor
-    @mapping[property] = portName
+    outPort.on 'attach', (socket) =>
+      return unless @actor
+      socket.send(@actor[property])
+      socket.disconnect()
+    @objectToPort[property] = portName
+    @portToObject[portName] = property
 
   onPropertyNotify: (actor, spec) ->
-    portName = @mapping[spec.name]
+    portName = @objectToPort[spec.name]
     return unless portName
-    log('notify ' + portName + ' : ' + @actor[spec.name])
     port = @outPorts[portName]
-    port.send(@actor[spec.name]) if port.isAttached()
+    return unless port.isAttached()
+    port.send(@actor[spec.name])
+    port.disconnect()
 
   shutdown: () ->
     @destroyActor()
