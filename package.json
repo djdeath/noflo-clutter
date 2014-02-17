@@ -19,10 +19,12 @@
   "dependencies": {
     "noflo": "~0.3.3",
     "noflo-core": "~0.1.0",
+    "noflo-ui": "git://github.com/noflo/noflo-ui.git",
     "fbp": "~1.0.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
+    "grunt-exec": "~0.4.2",
     "grunt-contrib-coffee": "~0.6.6",
     "grunt-coffeelint": "~0.0.6",
     "chai": "~1.5.0",

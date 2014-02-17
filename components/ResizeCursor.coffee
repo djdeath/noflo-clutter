@@ -8,8 +8,6 @@ class ResizeCursor extends noflo.Component
       ratioy: new noflo.Port 'number'
 
     @Gdk = imports.gi.Gdk
-    @display = @Gdk.Display.get_default()
-    @screen = @display.get_screen(0)
 
     @connectDataPort('ratioX', @inPorts.ratiox)
     @connectDataPort('ratioY', @inPorts.ratioy)
@@ -25,7 +23,9 @@ class ResizeCursor extends noflo.Component
 
   showResizingCursor: () =>
     return unless @ratioX != null && @ratioY != null
-    gdkWindow = @screen.get_active_window()
+    display = @Gdk.Display.get_default()
+    screen = display.get_screen(0)
+    gdkWindow = screen.get_active_window()
     cursorType = @Gdk.CursorType.LEFT_PTR
     if @ratioX < 0
       if @ratioY > 0
@@ -51,7 +51,9 @@ class ResizeCursor extends noflo.Component
 
   hideResizingCursor: () =>
     return unless @window != null
-    gdkWindow = @screen.get_active_window()
+    display = @Gdk.Display.get_default()
+    screen = display.get_screen(0)
+    gdkWindow = screen.get_active_window()
     gdkWindow.set_cursor(@Gdk.Cursor.new_for_display(display, @Gdk.CursorType.LEFT_PTR))
 
 exports.getComponent = -> new ResizeCursor

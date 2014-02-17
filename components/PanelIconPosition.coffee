@@ -9,10 +9,10 @@ class PanelIconPosition extends noflo.Component
     @outPorts =
       box: new noflo.ArrayPort 'object'
 
-    @panel = imports.ui.panel.getDefault();
 
     @inPorts.application.on 'data', (appId) =>
-      button = @panel.getApplicationButton(appId)
+      panel = imports.ui.panel.getDefault();
+      button = panel.getApplicationButton(appId)
       return unless button != null
 
       pos = button.get_transformed_position()

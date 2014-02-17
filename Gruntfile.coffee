@@ -50,6 +50,15 @@ module.exports = ->
         files:
           './browser/noflo-clutter.min.js': ['./browser/noflo-clutter.js']
 
+    # Editor's UI
+    exec:
+      ui_install:
+        command: 'npm install'
+        cwd: './node_modules/noflo-ui'
+      ui_build:
+        command: 'grunt build'
+        cwd: './node_modules/noflo-ui'
+
     # Automated recompilation and testing when developing
     watch:
       files: ['spec/*.coffee', 'components/*.coffee', 'graphs/*.json']
@@ -69,8 +78,13 @@ module.exports = ->
   # Grunt plugins used for testing
   @loadNpmTasks 'grunt-contrib-watch'
   @loadNpmTasks 'grunt-coffeelint'
+  @loadNpmTasks 'grunt-exec'
 
   # Our local tasks
+  @registerTask 'ui', 'Build NoFlo web UI', (target = 'all') =>
+    @task.run 'exec'
+
+
   @registerTask 'build', 'Build NoFlo for the chosen target platform', (target = 'all') =>
     @task.run 'coffee'
     if target is 'all' or target is 'browser'

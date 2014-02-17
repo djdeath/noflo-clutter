@@ -113,6 +113,12 @@ class PanelDrawerOpener extends noflo.Component
       @outPorts.closingdrawer.send(drawer)
       @outPorts.closingdrawer.disconnect()
 
-
+  shutdown: () =>
+    if @clickedApplicationId
+      @drawer.disconnect(@clickedApplicationId)
+      delete @clickedApplicationId
+    if @outsideId
+      @drawerLayer.disconnect(@outsideId)
+      delete @outsideId
 
 exports.getComponent = -> new PanelDrawerOpener

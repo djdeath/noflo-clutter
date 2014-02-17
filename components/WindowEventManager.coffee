@@ -1,15 +1,10 @@
 noflo = require 'noflo'
 
-class WindowManager extends noflo.Component
-  description: 'Expose the value of a property of an object'
+class WindowEventManager extends noflo.Component
+  description: 'Window specific event'
   constructor: ->
     @inPorts =
-      maximized: new noflo.ArrayPort 'object'
-      unmaximized: new noflo.ArrayPort 'object'
-      minimized: new noflo.ArrayPort 'object'
-      unminimized: new noflo.ArrayPort 'object'
-      destroywindow: new noflo.ArrayPort 'object'
-      raisewindow: new noflo.ArrayPort 'object'
+      start: new noflo.ArrayPort 'boolean'
 
     @outPorts =
       movebegin: new noflo.ArrayPort 'object'
@@ -30,24 +25,24 @@ class WindowManager extends noflo.Component
       clickedwindow: new noflo.ArrayPort 'object'
 
       closewindow: new noflo.ArrayPort 'object'
-      addwindow: new noflo.ArrayPort 'object'
 
       maximizewindow: new noflo.ArrayPort 'object'
       unmaximizewindow: new noflo.ArrayPort 'object'
 
       minimizewindow: new noflo.ArrayPort 'object'
 
-      windows: new noflo.ArrayPort 'object'
-      visiblewindows: new noflo.ArrayPort 'object'
-      minimizedwindows: new noflo.ArrayPort 'object'
-
-      areawidth: new noflo.ArrayPort 'number'
-      areaheight: new noflo.ArrayPort 'number'
-
     @Lang = imports.lang
-    @windowManager = imports.windowManager.getDefault()
     @windowManagerIds = []
 
+    # Initialization (propagate default values into the graph)
+    @inPorts.start.on 'data', () =>
+      @startup()
+
+
+  startup: ->
+    @windowManager = imports.windowManager.getDefault()
+
+    @stop()
     @connectWindowManager('move-begin', @Lang.bind(this, @moveBegin))
     @connectWindowManager('move-end', @Lang.bind(this, @moveEnd))
     @connectWindowManager('move-update', @Lang.bind(this, @moveUpdate))
@@ -56,7 +51,6 @@ class WindowManager extends noflo.Component
     @connectWindowManager('resize-end', @Lang.bind(this, @resizeEnd))
     @connectWindowManager('resize-update', @Lang.bind(this, @resizeUpdate))
 
-    @connectWindowManager('add-window', @Lang.bind(this, @addWindow))
     @connectWindowManager('close-window', @Lang.bind(this, @closeWindow))
 
     @connectWindowManager('clicked-window', @Lang.bind(this, @clickedWindow))
@@ -66,32 +60,18 @@ class WindowManager extends noflo.Component
 
     @connectWindowManager('minimize-window', @Lang.bind(this, @minimizeWindow))
 
-    @connectWindowManager('windows-list-update', @Lang.bind(this, @windowsListUpdated))
-    @connectWindowManager('visible-windows-list-update', @Lang.bind(this, @visibleWindowsListUpdated))
-    @connectWindowManager('minimized-windows-list-update', @Lang.bind(this, @minimizedWindowsListUpdated))
-
-    @connectWindowManager('windows-area-update', @Lang.bind(this, @windowsAreaChanged))
-
     @connectWindowManager('pre-resize-begin', @Lang.bind(this, @preResizeBegin))
     @connectWindowManager('pre-resize-end', @Lang.bind(this, @preResizeEnd))
 
-    @inPorts.maximized.on 'data', (win) =>
-      @windowManager.maximized(win)
-    @inPorts.unmaximized.on 'data', (win) =>
-      @windowManager.unmaximized(win)
-    @inPorts.minimized.on 'data', (win) =>
-      @windowManager.minimized(win)
-    @inPorts.unminimized.on 'data', (win) =>
-      @windowManager.unminimized(win)
-    @inPorts.destroywindow.on 'data', (win) =>
-      @windowManager.destroyWindow(win)
-    @inPorts.raisewindow.on 'data', (win) =>
-      @windowManager.raiseWindow(win)
+    @windowManager.reinit()
 
-  shutdown: ->
+  stop: ->
     for id in @windowManagerIds
       @windowManager.disconnect(id)
     @windowManagerIds = []
+
+  shutdown: ->
+    @stop()
 
   connectWindowManager: (signalName, callback) =>
     id = @windowManager.connect(signalName, callback)
@@ -167,11 +147,6 @@ class WindowManager extends noflo.Component
     @outPorts.resizeratioy.disconnect() if @outPorts.resizeratioy.isConnected()
     @outPorts.preresizewindow.disconnect() if @outPorts.preresizewindow.isConnected()
 
-  addWindow: (manager, win) =>
-    if @outPorts.addwindow.isAttached()
-      @outPorts.addwindow.send(win)
-      @outPorts.addwindow.disconnect()
-
   closeWindow: (manager, win) =>
     if @outPorts.closewindow.isAttached()
       @outPorts.closewindow.send(win)
@@ -197,17 +172,4 @@ class WindowManager extends noflo.Component
       @outPorts.clickedwindow.send(win)
       @outPorts.clickedwindow.disconnect()
 
-  windowsListUpdated: (manager) =>
-    @outPorts.windows.send(@windowManager.windows) if @outPorts.windows.isAttached()
-
-  visibleWindowsListUpdated: (manager) =>
-    @outPorts.visiblewindows.send(@windowManager.visibleWindows) if @outPorts.visiblewindows.isAttached()
-
-  minimizedWindowsListUpdated: (manager) =>
-    @outPorts.minimizedwindows.send(@windowManager.minimizedWindows) if @outPorts.minimizedwindows.isAttached()
-
-  windowsAreaChanged: (manager, areaWidth, areaHeight) =>
-    @outPorts.areawidth.send(areaWidth) if @outPorts.areawidth.isAttached()
-    @outPorts.areaheight.send(areaHeight) if @outPorts.areaheight.isAttached()
-
-exports.getComponent = -> new WindowManager
+exports.getComponent = -> new WindowEventManager
