@@ -7,12 +7,25 @@ class GioFileMonitor extends noflo.Component
   constructor: ->
     @inPorts =
       filename: new noflo.Port 'string'
+      start: new noflo.Port 'bang'
+      stop: new noflo.Port 'bang'
     @outPorts =
       changed: new noflo.ArrayPort 'boolean'
 
-    @inPorts.filename.on 'data', (filename) =>
+    @inPorts.start.on 'data', (data) =>
+      @shouldStart = true
+      @start(@filename) if @filename
+
+    @inPorts.stop.on 'data', (data) =>
       @stop()
-      @start(filename)
+
+    @inPorts.filename.on 'data', (filename) =>
+      @filename = filename
+      if @started
+        @stop()
+        @start(@filename)
+      else if @shouldStart
+        @start(@filename)
 
   changed: (monitor, file, other_file, event_type) ->
     log(Gio.FileMonitorEvent.CHANGES_DONE_HINT)
@@ -25,11 +38,13 @@ class GioFileMonitor extends noflo.Component
     file = Gio.File.new_for_path(filename)
     @monitor = file.monitor(Gio.FileMonitorFlags.NONE, null)
     @monitorId = @monitor.connect('changed', Lang.bind(this, @changed))
+    @started = true
 
   stop: ->
-    if @monitorId
-      @monitor.disconnect(@monitorId)
-      delete @monitorId
+    @shouldStart = false
+    return unless @started
+    @monitor.disconnect(@monitorId)
+    @started = false
 
   shutdown: ->
     @stop()
