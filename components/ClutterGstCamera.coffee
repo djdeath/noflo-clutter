@@ -1,6 +1,7 @@
 noflo = require 'noflo'
 
 ClutterGst = imports.gi.ClutterGst
+Mainloop = imports.mainloop
 Lang = imports.lang
 
 class ClutterGstCamera extends noflo.Component
@@ -27,14 +28,22 @@ class ClutterGstCamera extends noflo.Component
 
   start: (device) ->
     @camera = new ClutterGst.Camera({ device: device })
-    @camera.set_playing(true)
     @newFrameId = @camera.connect('new-frame', Lang.bind(this, @newFrame))
+    @delayedId = Mainloop.timeout_add(0, Lang.bind(this, @delayedCameraStart))
+
+  delayedCameraStart: () ->
+    delete @delayedId
+    @camera.set_playing(true)
     if @outPorts.started.isAttached()
       @outPorts.started.send(true)
       @outPorts.started.disconnect()
+    return false
 
   stop: () ->
     return unless @camera
+    if @delayedId
+      Mainloop.source_remove(@delayedId)
+      delete @delayedId
     if @newFrameId
       @outPorts.frame.disconnect() if @outPorts.frame.isConnected()
       @camera.disconnect(@newFrameId)
