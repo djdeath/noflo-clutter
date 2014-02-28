@@ -65,9 +65,10 @@ const WebProtoServer = new Lang.Class({
 
     mainHandler: function(server, path, connection, client) {
         if (this.connection != null) {
-            log('A client is already connected, bye-bye.');
-            connection.close(0, null);
-            return;
+            this.connection.close(0, null);
+            this.clientDisconnected(this.connection);
+            log('A client is already connected, bye-bye to the previous one.');
+            //return;
         }
 
         log('client connected to ' + path);
