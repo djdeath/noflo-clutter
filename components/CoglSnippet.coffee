@@ -16,7 +16,9 @@ class CoglSnippet extends StateComponent
     @connectParamPort('code', @inPorts.code)
 
   process: (state) ->
+    return unless @outPorts.snippet.isAttached()
     snippet = new Cogl.Snippet(Cogl.SnippetHook[state.hook.toUpperCase()], '', state.code)
-    @outPorts.snippet.send(snippet) if @outPorts.snippet.isAttached()
+    @outPorts.snippet.send(snippet)
+    @outPorts.snippet.disconnect()
 
 exports.getComponent = -> new CoglSnippet
