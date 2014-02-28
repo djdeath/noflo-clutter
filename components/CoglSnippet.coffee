@@ -13,7 +13,7 @@ class CoglSnippet extends StateComponent
       snippet: new noflo.ArrayPort 'object'
 
     @connectParamPort('hook', @inPorts.hook)
-    @connectDataPort('code', @inPorts.code)
+    @connectParamPort('code', @inPorts.code)
 
   process: (state) ->
     snippet = new Cogl.Snippet(Cogl.SnippetHook[state.hook.toUpperCase()], '', state.code)
