@@ -28,7 +28,6 @@ class GioFileMonitor extends noflo.Component
         @start(@filename)
 
   changed: (monitor, file, other_file, event_type) ->
-    log(Gio.FileMonitorEvent.CHANGES_DONE_HINT)
     return if event_type != Gio.FileMonitorEvent.CHANGES_DONE_HINT
     if @outPorts.changed.isAttached()
       @outPorts.changed.send(true)
