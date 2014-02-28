@@ -1,6 +1,7 @@
 noflo = require 'noflo'
 
 Gio = imports.gi.Gio
+Lang = imports.lang
 
 class GioFileMonitor extends noflo.Component
   description: 'Monitors a file for changes'
