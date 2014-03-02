@@ -1,8 +1,12 @@
 noflo = require 'noflo'
+{StateComponent} = require '../lib/StateComponent'
 
-class MonitoryProperty extends noflo.Component
+Lang = imports.lang
+
+class MonitoryProperty extends StateComponent
   description: 'Expose the value of a property of an object'
   constructor: ->
+    super()
     @inPorts =
       object: new noflo.Port 'object'
       property: new noflo.Port 'string'
@@ -10,25 +14,29 @@ class MonitoryProperty extends noflo.Component
     @outPorts =
       value: new noflo.ArrayPort
 
-    @Lang = imports.lang
+    @connectParamPort('object', @inPorts.object)
+    @connectParamPort('property', @inPorts.property)
 
-    @inPorts.property.on 'data', (property) =>
-      @property = property
-      resetWatcher()
+  process: (state) ->
+    @unlistenObject()
+    @listenObject(state.object, state.property)
 
-    @inPorts.object.on 'data', (object) =>
-      @object = object
-      resetWatcher()
+  listenObject: (object, property) ->
+    @object = object
+    @property = property
+    @object.connect('notify::' + property, Lang.bind(this, @notifyProperty))
 
-  notifyProperty: =>
+  unlistenObject: () ->
+    return unless @notifyId
+    @object.disconnect(@notifyId)
+    delete @notifyId
+
+  notifyProperty: ->
+    return unless @outPorts.value.isAttached()
     @outPorts.value.send(@object[@property])
+    @outPorts.value.disconnect()
 
-  resetWatcher: =>
-    if @propertyId
-      @object.disconnect(@propertyId)
-      @propertyId = null
-    if @object && @property
-      @object.connect('notify::' + @property, @Lang.bind(this, @notifyProperty))
-      @outPorts.value.send(@object[@property])
+  shutdown: ->
+    @unlistenObject()
 
 exports.getComponent = -> new MonitoryProperty
