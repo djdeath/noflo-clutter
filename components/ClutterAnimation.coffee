@@ -40,7 +40,7 @@ class ClutterAnimation extends noflo.Component
 
     @inPorts.easing.on 'data', (value) =>
       mode = Clutter.AnimationMode[value.toUpperCase()]
-      @getTimeline().progress_mode = mode if mode
+      @getTimeline().progress_mode = mode if mode != null && mode != undefined
 
     @inPorts.autoreverse.on 'data', (value) =>
       @getTimeline().auto_reverse = value
@@ -65,7 +65,8 @@ class ClutterAnimation extends noflo.Component
 
   progress: (tl, msecs) ->
     return unless @outPorts.value.isAttached()
-    @outPorts.value.send(@start + (@stop - @start) * (msecs / @timeline.duration))
+    value = @start + (@stop - @start) * @timeline.get_progress()
+    @outPorts.value.send(value)
     @outPorts.value.disconnect()
 
   started: () ->
