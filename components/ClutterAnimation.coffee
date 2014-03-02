@@ -57,7 +57,7 @@ class ClutterAnimation extends noflo.Component
   getTimeline: () ->
     return @timeline if @timeline
     @timeline = new Clutter.Timeline()
-    @startId = @timeline.connect('started', Lang.bind(this, @started))
+    @startedId = @timeline.connect('started', Lang.bind(this, @started))
     @stoppedId = @timeline.connect('stopped', Lang.bind(this, @stopped))
     @completedId = @timeline.connect('completed', Lang.bind(this, @completed))
     @newFrameId = @timeline.connect('new-frame', Lang.bind(this, @progress))
