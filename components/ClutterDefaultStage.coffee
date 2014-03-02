@@ -35,7 +35,7 @@ class ClutterDefaultStage extends noflo.Component
         @destroyActor()
     @outPorts.object.on 'attach', (socket) =>
       return unless @actor
-      socket.send(actor)
+      socket.send(@actor)
       socket.disconnect()
 
   createActor: () ->
