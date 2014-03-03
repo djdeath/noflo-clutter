@@ -55,6 +55,9 @@ module.exports = ->
       ui_install:
         command: 'npm install'
         cwd: './node_modules/noflo-ui'
+      ui_nuke:
+        command: 'grunt nuke'
+        cwd: './node_modules/noflo-ui'
       ui_build:
         command: 'grunt build'
         cwd: './node_modules/noflo-ui'
