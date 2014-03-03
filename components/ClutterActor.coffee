@@ -14,7 +14,8 @@ class ClutterActor extends noflo.Component
 
     @portToObject = {}
     @objectToPort = {}
-    @cache = {}
+    @actor = null
+
     @mapInOutPort('x', 'x', 'number')
     @mapInOutPort('y', 'y', 'number')
     @mapInOutPort('z', 'z-position', 'number')
@@ -27,58 +28,53 @@ class ClutterActor extends noflo.Component
     @mapInOutPort('reactive', 'reactive', 'boolean')
 
     @inPorts.active.on 'data', (active) =>
-      return if active && @actor
-      return if !active && !@actor
       if active
-        @createActor()
+        @activateActor()
       else
-        @destroyActor()
+        @deactivateActor()
     @outPorts.object.on 'attach', (socket) =>
-      return unless @actor
-      socket.send(@actor)
+      socket.send(@getActor())
       socket.disconnect()
 
-  createActor: () ->
-    return if @actor
-    stageManager = Clutter.StageManager.get_default()
-    stage = stageManager.list_stages()[0]
-
+  getActor: () ->
+    return @actor if @actor
     @actor = new Clutter.Actor()
-    @initializeObject()
-    stage.add_child(@actor)
+    @notifyId = @actor.connect('notify', Lang.bind(this, @onPropertyNotify))
     if @outPorts.object.isAttached()
       @outPorts.object.send(@actor)
       @outPorts.object.disconnect()
-    @notifyId = @actor.connect('notify', Lang.bind(this, @onPropertyNotify))
-    @initialNotify()
+    return @actor
+
+  activateActor: () ->
+    return if @getActor().get_parent() != null
+    stageManager = Clutter.StageManager.get_default()
+    stage = stageManager.list_stages()[0]
+
+    actor = @getActor()
+    stage.add_child(actor)
+    if @outPorts.object.isAttached()
+      @outPorts.object.send(actor)
+      @outPorts.object.disconnect()
+
+  dectivateActor: () ->
+    actor = @getActor()
+    parent = actor.get_parent()
+    return unless parent != null
+    parent.remove_child(actor)
 
   destroyActor: () ->
     return unless @actor
-    @actor.disconnect(@notifyId)
-    parent = @actor.get_parent()
-    parent.remove_child(@actor)
+    @dectivateActor()
     @actor.destroy()
     delete @actor
-
-  initializeObject: () ->
-    for prop, value of @cache
-      @actor[prop] = value
-
-  initialNotify: () ->
-    for name, port of @outPorts
-      continue unless port.isAttached()
-      port.send(@actor[@portToObject[name]])
-      port.disconnect()
 
   mapInOutPort: (portName, property, type) ->
     inPort = @inPorts[portName] = new noflo.Port type
     outPort = @outPorts[portName] = new noflo.Port type
     inPort.on 'data', (data) =>
-      @cache[property] = data
-      @actor[property] = data if @actor
+      @getActor()[property] = data
     outPort.on 'attach', (socket) =>
-      return unless @actor
-      socket.send(@actor[property])
+      socket.send(@getActor()[property])
       socket.disconnect()
     @objectToPort[property] = portName
     @portToObject[portName] = property
@@ -88,7 +84,7 @@ class ClutterActor extends noflo.Component
     return unless portName
     port = @outPorts[portName]
     return unless port.isAttached()
-    port.send(@actor[spec.name])
+    port.send(@getActor()[spec.name])
     port.disconnect()
 
   shutdown: () ->
