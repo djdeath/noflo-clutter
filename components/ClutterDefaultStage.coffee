@@ -11,6 +11,8 @@ class ClutterDefaultStage extends noflo.Component
 
     @outPorts =
       object: new noflo.Port 'object'
+      capturedevent: new noflo.Port 'object'
+      event: new noflo.Port 'object'
 
     @portToObject = {}
     @objectToPort = {}
@@ -21,54 +23,50 @@ class ClutterDefaultStage extends noflo.Component
     @mapInOutPort('reactive', 'reactive', 'boolean')
 
     @inPorts.active.on 'data', (active) =>
-      return if active && @actor
-      return if !active && !@actor
       if active
-        @createActor()
+        @activateActor()
       else
-        @destroyActor()
+        @deactivateActor()
     @outPorts.object.on 'attach', (socket) =>
-      return unless @actor
-      socket.send(@actor)
+      socket.send(@getActor())
       socket.disconnect()
 
-  createActor: () ->
-    return if @actor
-    stageManager = Clutter.StageManager.get_default()
-    stage = stageManager.list_stages()[0]
+    @eventRefCount = 0
+    @outPorts.event.on 'attach', () =>
+      @eventRef()
+    @outPorts.event.on 'detach', () =>
+      @eventUnref()
+    @capturedEventRefCount = 0
+    @outPorts.capturedevent.on 'attach', () =>
+      @capturedEventRef()
+    @outPorts.capturedevent.on 'detach', () =>
+      @capturedEventUnref()
 
-    @actor = stage
+  # Actor creation/management
+
+  getActor: () ->
+    return @actor if @actor
+    stageManager = Clutter.StageManager.get_default()
+    @actor = stageManager.list_stages()[0]
     if @outPorts.object.isAttached()
       @outPorts.object.send(@actor)
       @outPorts.object.disconnect()
-    @initializeObject()
     @notifyId = @actor.connect('notify', Lang.bind(this, @onPropertyNotify))
-    @initialNotify()
+    return @actor
 
-  destroyActor: () ->
-    return unless @actor
-    @actor.disconnect(@notifyId)
-    delete @actor
+  activateActor: () ->
+    @getActor().show()
 
-  initializeObject: () ->
-    for prop, value of @cache
-      @actor[prop] = value
-
-  initialNotify: () ->
-    for name, port of @outPorts
-      continue unless port.isAttached()
-      port.send(@actor[@portToObject[name]])
-      port.disconnect()
+  deactivateActor: () ->
+    @getActor().hide()
 
   mapInOutPort: (portName, property, type) ->
     inPort = @inPorts[portName] = new noflo.Port type
     outPort = @outPorts[portName] = new noflo.Port type
     inPort.on 'data', (data) =>
-      @cache[property] = data
-      @actor[property] = data if @actor
+      @getActor()[property] = data
     outPort.on 'attach', (socket) =>
-      return unless @actor
-      socket.send(@actor[property])
+      socket.send(@getActor()[property])
       socket.disconnect()
     @objectToPort[property] = portName
     @portToObject[portName] = property
@@ -78,10 +76,56 @@ class ClutterDefaultStage extends noflo.Component
     return unless portName
     port = @outPorts[portName]
     return unless port.isAttached()
-    port.send(@actor[spec.name])
+    port.send(@getActor()[spec.name])
     port.disconnect()
 
+  # Event listening
+
+  eventRef: () ->
+    needConnect = if @eventRefCount < 1 then true else false
+    @eventRefCount += 1
+    @eventId = @getActor().connect('event', Lang.bind(this, @eventReceived))
+
+  eventUnref: () ->
+    @eventRefCount -= 1
+    if @eventRefCount == 0 && @eventId
+      @getActor().disconnect(@eventId)
+      delete @eventId
+
+  capturedEventRef: () ->
+    needConnect = if @capturedEventRefCount < 1 then true else false
+    @capturedEventRefCount += 1
+    @capturedEventId = @getActor().connect('captured-event', Lang.bind(this, @capturedEventReceived))
+
+  capturedEventUnref: () ->
+    @capturedEventRefCount -= 1
+    if @capturedEventRefCount == 0 && @capturedEventId
+      @getActor().disconnect(@capturedEventId)
+      delete @capturedEventId
+
+  stopEventListening: () ->
+    if @eventId
+      @getActor().disconnect(@eventId)
+      delete @eventId
+    if @capturedEventId
+      @getActor().disconnect(@capturedEventId)
+      delete @capturedEventId
+
+  capturedEventReceived: (actor, event) ->
+    event.consumed = false
+    @outPorts.capturedevent.send(event)
+    @outPorts.capturedevent.disconnect()
+    return event.consumed
+
+  eventReceived: (actor, event) ->
+    event.consumed = false
+    @outPorts.event.send(event)
+    @outPorts.event.disconnect()
+    return event.consumed
+
+  # Shutdown
+
   shutdown: () ->
-    @destroyActor()
+    @deactivateActor()
 
 exports.getComponent = -> new ClutterDefaultStage
