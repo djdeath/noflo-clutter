@@ -15,14 +15,8 @@ class ClutterDefaultStage extends noflo.Component
     @portToObject = {}
     @objectToPort = {}
     @cache = {}
-    @mapInOutPort('x', 'x', 'number')
-    @mapInOutPort('y', 'y', 'number')
-    @mapInOutPort('z', 'z-position', 'number')
-    @mapInOutPort('scalex', 'scale-x', 'number')
-    @mapInOutPort('scaley', 'scale-y', 'number')
     @mapInOutPort('width', 'width', 'number')
     @mapInOutPort('height', 'height', 'number')
-    @mapInOutPort('opacity', 'opacity', 'number')
     @mapInOutPort('content', 'content', 'object')
     @mapInOutPort('reactive', 'reactive', 'boolean')
 
