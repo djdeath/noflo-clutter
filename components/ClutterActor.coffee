@@ -56,7 +56,7 @@ class ClutterActor extends noflo.Component
       @outPorts.object.send(actor)
       @outPorts.object.disconnect()
 
-  dectivateActor: () ->
+  deactivateActor: () ->
     actor = @getActor()
     parent = actor.get_parent()
     return unless parent != null
