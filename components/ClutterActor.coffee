@@ -11,6 +11,8 @@ class ClutterActor extends noflo.Component
 
     @outPorts =
       object: new noflo.Port 'object'
+      capturedevent: new noflo.Port 'object'
+      event: new noflo.Port 'object'
 
     @portToObject = {}
     @objectToPort = {}
@@ -42,6 +44,19 @@ class ClutterActor extends noflo.Component
       socket.send(@getActor())
       socket.disconnect()
 
+    @eventRefCount = 0
+    @outPorts.event.on 'attach', () =>
+      @eventRef()
+    @outPorts.event.on 'detach', () =>
+      @eventUnref()
+    @capturedEventRefCount = 0
+    @outPorts.capturedevent.on 'attach', () =>
+      @capturedEventRef()
+    @outPorts.capturedevent.on 'detach', () =>
+      @capturedEventUnref()
+
+  # Actor creation/management
+
   getActor: () ->
     return @actor if @actor
     @actor = new Clutter.Actor()
@@ -71,8 +86,55 @@ class ClutterActor extends noflo.Component
   destroyActor: () ->
     return unless @actor
     @deactivateActor()
+    @stopEventListening()
     @actor.destroy()
     delete @actor
+
+  # Event listening
+
+  eventRef: () ->
+    needConnect = if @eventRefCount < 1 then true else false
+    @eventRefCount += 1
+    @eventId = @getActor().connect('event', Lang.bind(this, @eventReceived))
+
+  eventUnref: () ->
+    @eventRefCount -= 1
+    if @eventRefCount == 0 && @eventId
+      @getActor().disconnect(@eventId)
+      delete @eventId
+
+  capturedEventRef: () ->
+    needConnect = if @capturedEventRefCount < 1 then true else false
+    @capturedEventRefCount += 1
+    @capturedEventId = @getActor().connect('captured-event', Lang.bind(this, @capturedEventReceived))
+
+  capturedEventUnref: () ->
+    @capturedEventRefCount -= 1
+    if @capturedEventRefCount == 0 && @capturedEventId
+      @getActor().disconnect(@capturedEventId)
+      delete @capturedEventId
+
+  stopEventListening: () ->
+    if @eventId
+      @getActor().disconnect(@eventId)
+      delete @eventId
+    if @capturedEventId
+      @getActor().disconnect(@capturedEventId)
+      delete @capturedEventId
+
+  capturedEventReceived: (actor, event) ->
+    event.consumed = false
+    @outPorts.capturedevent.send(event)
+    @outPorts.capturedevent.disconnect()
+    return event.consumed
+
+  eventReceived: (actor, event) ->
+    event.consumed = false
+    @outPorts.event.send(event)
+    @outPorts.event.disconnect()
+    return event.consumed
+
+  # Automatic property wiring
 
   convertPortIfNeeded: (portName, value) ->
     return value unless @portToObject[portName].convert
@@ -108,6 +170,8 @@ class ClutterActor extends noflo.Component
     port.send(@convertPropertyIfNeeded(property, @getActor()[property]))
     port.disconnect()
 
+  # Conversions
+
   pointToPointY: (value) ->
     return value.y
 
@@ -123,6 +187,8 @@ class ClutterActor extends noflo.Component
     pivotPoint = @getActor().pivot_point
     pivotPoint.y = value
     return pivotPoint
+
+  # Shutdown
 
   shutdown: () ->
     @destroyActor()
