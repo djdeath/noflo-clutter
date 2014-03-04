@@ -33,6 +33,7 @@ class ClutterActor extends noflo.Component
     @mapInOutPort('height', 'height', 'number')
     @mapInOutPort('opacity', 'opacity', 'number')
     @mapInOutPort('content', 'content', 'object')
+    @mapInOutPort('backgroundcolor', 'background-color', 'object', 'objectToColor')
     @mapInOutPort('reactive', 'reactive', 'boolean')
 
     @inPorts.active.on 'data', (active) =>
@@ -187,6 +188,12 @@ class ClutterActor extends noflo.Component
     pivotPoint = @getActor().pivot_point
     pivotPoint.y = value
     return pivotPoint
+
+  objectToColor: (value) ->
+    color = new Clutter.Color()
+    for k, v of value
+      color[k] = v
+    return color
 
   # Shutdown
 

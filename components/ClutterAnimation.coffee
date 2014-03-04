@@ -5,9 +5,11 @@ Lang = imports.lang
 
 class ClutterAnimation extends noflo.Component
   description: 'Animates a ClutterActor'
+  icon: 'stop'
   constructor: ->
     @inPorts =
       start: new noflo.Port 'bang'
+      pause: new noflo.Port 'bang'
       stop: new noflo.Port 'bang'
       delay: new noflo.Port 'number'
       duration: new noflo.Port 'number'
@@ -20,6 +22,7 @@ class ClutterAnimation extends noflo.Component
     @outPorts =
       completed: new noflo.Port 'bang'
       started: new noflo.Port 'bang'
+      paused: new noflo.Port 'bang'
       stopped: new noflo.Port 'bang'
       value: new noflo.Port 'number'
 
@@ -28,6 +31,9 @@ class ClutterAnimation extends noflo.Component
 
     @inPorts.start.on 'data', () =>
       @getTimeline().start()
+
+    @inPorts.pause.on 'data', () =>
+      @getTimeline().pause()
 
     @inPorts.stop.on 'data', () =>
       @getTimeline().stop()
@@ -58,6 +64,7 @@ class ClutterAnimation extends noflo.Component
     return @timeline if @timeline
     @timeline = new Clutter.Timeline()
     @startedId = @timeline.connect('started', Lang.bind(this, @started))
+    @pausedId = @timeline.connect('paused', Lang.bind(this, @paused))
     @stoppedId = @timeline.connect('stopped', Lang.bind(this, @stopped))
     @completedId = @timeline.connect('completed', Lang.bind(this, @completed))
     @newFrameId = @timeline.connect('new-frame', Lang.bind(this, @progress))
@@ -70,11 +77,19 @@ class ClutterAnimation extends noflo.Component
     @outPorts.value.disconnect()
 
   started: () ->
+    @setIcon('play')
     return unless @outPorts.started.isAttached()
     @outPorts.started.send(true)
     @outPorts.started.disconnect()
 
+  paused: () ->
+    @setIcon('pause')
+    return unless @outPorts.paused.isAttached()
+    @outPorts.paused.send(true)
+    @outPorts.paused.disconnect()
+
   stopped: () ->
+    @setIcon('stop')
     return unless @outPorts.stopped.isAttached()
     @outPorts.stopped.send(true)
     @outPorts.stopped.disconnect()
@@ -86,11 +101,13 @@ class ClutterAnimation extends noflo.Component
 
   shutdown: () ->
     @timeline.disconnect(@startedId)
+    @timeline.disconnect(@pausedId)
     @timeline.disconnect(@stoppedId)
     @timeline.disconnect(@completedId)
     @timeline.disconnect(@newFrameId)
     @timeline.stop()
     delete @startedId
+    delete @pausedId
     delete @stoppedId
     delete @completedId
     delete @newFrameId
