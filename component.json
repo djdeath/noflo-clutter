@@ -9,6 +9,7 @@
   "dependencies": {
     "noflo/noflo": "*",
     "noflo/noflo-core": "*",
+    "noflo/noflo-flow": "*",
     "noflo/noflo-runtime-base": "*"
   },
   "scripts": [
