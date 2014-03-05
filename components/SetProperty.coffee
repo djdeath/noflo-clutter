@@ -6,7 +6,9 @@ class SetProperty extends noflo.Component
     @inPorts =
       object: new noflo.Port 'object'
       property: new noflo.Port 'string'
-      value: new noflo.Port
+      value: new noflo.Port 'all'
+    @outPorts =
+      object: new noflo.Port 'object'
 
     @inPorts.property.on 'data', (property) =>
       @property = property
@@ -21,7 +23,10 @@ class SetProperty extends noflo.Component
       @setValue(@object, @property, @value)
 
   setValue: (object, property, value) =>
-    if (object != undefined && property != undefined)
-      object[property] = value if value != undefined
+    return unless object != undefined && property != undefined && value != undefined
+    object[property] = value
+    if @outPorts.object.isAttached()
+      @outPorts.object.send(object)
+      @outPorts.object.disconnect()
 
 exports.getComponent = -> new SetProperty
