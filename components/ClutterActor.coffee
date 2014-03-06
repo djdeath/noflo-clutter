@@ -195,6 +195,13 @@ class ClutterActor extends noflo.Component
       color[k] = v
     return color
 
+  colorToOjbect: (value) ->
+    obj = {}
+    props = [ 'red', 'green', 'blue', 'alpha' ]
+    for k in props
+      obj[k] = value[k] if value[k] != undefined
+    return obj
+
   # Shutdown
 
   shutdown: () ->
