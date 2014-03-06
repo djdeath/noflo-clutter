@@ -26,14 +26,14 @@ class ClutterActor extends noflo.Component
     @mapInOutPort('pivot-x', 'pivot-point', 'number', 'pointXToPoint', 'pointToPointX')
     @mapInOutPort('pivot-y', 'pivot-point', 'number', 'pointYToPoint', 'pointToPointY')
     @mapInOutPort('pivot-z', 'pivot-point-z', 'number')
-    @mapInOutPort('rotation-x', 'rotation-angle-x', 'number')
-    @mapInOutPort('rotation-y', 'rotation-angle-y', 'number')
-    @mapInOutPort('rotation-z', 'rotation-angle-z', 'number')
+    @mapInOutPort('rot-x', 'rotation-angle-x', 'number')
+    @mapInOutPort('rot-y', 'rotation-angle-y', 'number')
+    @mapInOutPort('rot-z', 'rotation-angle-z', 'number')
     @mapInOutPort('width', 'width', 'number')
     @mapInOutPort('height', 'height', 'number')
     @mapInOutPort('opacity', 'opacity', 'number')
     @mapInOutPort('content', 'content', 'object')
-    @mapInOutPort('backgroundcolor', 'background-color', 'object', 'objectToColor')
+    @mapInOutPort('bgcolor', 'background-color', 'object', 'objectToColor')
     @mapInOutPort('reactive', 'reactive', 'boolean')
 
     @inPorts.active.on 'data', (active) =>
