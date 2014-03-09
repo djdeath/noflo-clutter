@@ -106,6 +106,8 @@
     "graphs/ResizeWindow.json",
     "graphs/ResizeWindowConstrained.json",
     "index.js",
+    "lib/InBoundPorts.coffee",
+    "lib/OutBoundPorts.coffee",
     "lib/StateComponent.coffee"
   ],
   "json": [
